@@ -9,6 +9,17 @@ function safeUrl(value) {
     return null;
   }
 }
+function locationUrl(location) {
+  const hasCoordinates =
+    Number.isFinite(location.latitude) &&
+    Math.abs(location.latitude) <= 90 &&
+    Number.isFinite(location.longitude) &&
+    Math.abs(location.longitude) <= 180;
+  const query = hasCoordinates
+    ? `${location.latitude},${location.longitude}`
+    : location.description;
+  return `https://www.google.com/maps/search/?${new URLSearchParams({ api: "1", query })}`;
+}
 function Description({ text }) {
   return text.split(/(https?:\/\/[^\s<>]+)/g).map((part, index) => {
     const url = safeUrl(part);
@@ -34,11 +45,6 @@ function calendar(event) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 export default function EventCard({ event, saved, onToggle, now }) {
-  const location =
-    event.locations
-      .map((item) => item.description)
-      .filter(Boolean)
-      .join(" · ") || "Location to be announced";
   const map = safeUrl(event.mapImageUrl);
   const ongoing = now >= event.startTime * 1000 && now < event.endTime * 1000;
   return (
@@ -65,9 +71,29 @@ export default function EventCard({ event, saved, onToggle, now }) {
         <details>
           <summary>
             <h2>{event.name}</h2>
-            <span className="arrow" aria-hidden="true">
-              ↗
-            </span>
+            <svg
+              className="arrow"
+              viewBox="0 0 32 38"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M16 4c-2 8 2 16-1 27M6 23l9 9 10-11"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M18 6c-1 8 1 15-1 22M8 24l7 7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth=".7"
+                opacity=".5"
+                strokeLinecap="round"
+              />
+            </svg>
           </summary>
           <div className="description">
             <p>
@@ -91,7 +117,26 @@ export default function EventCard({ event, saved, onToggle, now }) {
             </div>
           </div>
         </details>
-        <p className="location">{location}</p>
+        <div className="locations">
+          {event.locations.length ? (
+            event.locations.map((location, index) => (
+              <p className="location" key={`${location.description}-${index}`}>
+                <span>{location.description}</span>
+                <a
+                  className="open-location"
+                  href={locationUrl(location)}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Open location: ${location.description}`}
+                >
+                  Open location <span aria-hidden="true">↗</span>
+                </a>
+              </p>
+            ))
+          ) : (
+            <p className="location">Location to be announced</p>
+          )}
+        </div>
       </div>
       <button
         className="save"

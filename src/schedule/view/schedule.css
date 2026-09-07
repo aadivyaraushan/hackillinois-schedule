@@ -359,9 +359,20 @@ h1 {
   padding: 25px 0;
   border-bottom: 1px solid #6e858044;
 }
-.event:hover {
-  background: #fffef52e;
+.event:hover,
+.event:focus-within {
+  background: #c5d6cc80;
+  box-shadow:
+    -8px 0 0 #c5d6cc80,
+    8px 0 0 #c5d6cc80,
+    inset 3px 0 #698b7a;
 }
+.event {
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
 .time {
   padding-top: 23px;
   white-space: nowrap;
@@ -371,10 +382,12 @@ h1 {
   font-variant-numeric: tabular-nums;
 }
 .time > time {
-  font-size: 18px;
+  font-size: 21px;
+  font-weight: 700;
+  color: #263f40;
 }
 .time p {
-  font: 600 15px/1.5 var(--hand);
+  font: 500 16px/1.5 var(--hand);
   letter-spacing: 0;
   color: #52676a;
   margin-top: 3px;
@@ -396,6 +409,8 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #536c65;
+  opacity: 0.85;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -434,25 +449,56 @@ h1 {
   display: none;
 }
 .event h2 {
-  font: 400 26px/1.16 var(--hand);
+  font: 700 30px/1.16 var(--hand);
   letter-spacing: -0.025em;
-  color: #34484e;
+  color: #263f40;
   overflow-wrap: anywhere;
 }
 .arrow {
-  font: 26px/1 var(--hand);
-  color: #70867c;
+  width: 26px;
+  height: 31px;
+  color: #607c70;
   transition: transform 0.2s;
   flex: none;
+  align-self: center;
 }
 .event details[open] .arrow {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
+}
+.locations {
+  margin-top: 9px;
 }
 .location {
-  font-size: 17px;
-  line-height: 1.5;
-  color: #536c65;
-  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  row-gap: 2px;
+  font-size: 19px;
+  line-height: 1.45;
+  color: #4e685f;
+  margin-top: 3px;
+}
+.location > span {
+  font-weight: 500;
+}
+.open-location {
+  display: inline-flex;
+  gap: 5px;
+  align-items: baseline;
+  min-height: 32px;
+  padding: 3px 0;
+  color: #31584c;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.open-location:hover {
+  color: #172f27;
+  text-decoration-style: solid;
 }
 .description {
   font-size: 18px;
@@ -633,7 +679,7 @@ h1 {
     padding: 23px 0;
   }
   .time > time {
-    font-size: 16px;
+    font-size: 18px;
   }
   .time p {
     font-size: 18px;
@@ -642,7 +688,7 @@ h1 {
     left: -12px;
   }
   .event h2 {
-    font-size: 23px;
+    font-size: 26px;
   }
   .location {
     font-size: 16px;
@@ -678,7 +724,8 @@ h1 {
 }
 @media (prefers-reduced-motion: reduce) {
   .route-boat,
-  .arrow {
+  .arrow,
+  .event {
     transition: none;
   }
 }
@@ -707,4 +754,20 @@ h1 {
   .event {
     break-inside: avoid;
   }
+}
+
+/* Keep secondary guidance quiet without fading event names or actionable links. */
+.edition,
+.day-date,
+.timezone,
+.day-heading > span,
+.schedule-footer {
+  color: #617369;
+  font-weight: 400;
+}
+.day-heading h2 {
+  font-weight: 600;
+}
+h1 {
+  font-weight: 600;
 }
