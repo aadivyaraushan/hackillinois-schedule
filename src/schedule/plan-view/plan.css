@@ -1,0 +1,80 @@
+.schedule-controls {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #69808055;
+}
+.schedule-views {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+}
+.schedule-views button {
+  font: 700 25px var(--hand);
+  color: #617369;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.schedule-views button[aria-pressed="true"] {
+  color: #163d67;
+  border-bottom: 3px solid #cba577;
+}
+.schedule-views button:focus-visible,
+.plan-actions button:focus-visible {
+  outline: 2px solid #163d67;
+  outline-offset: 4px;
+}
+.plan-actions {
+  max-width: 100%;
+}
+.plan-actions button {
+  font: 700 21px var(--hand);
+  border: 1px solid #698080;
+  background: #e1e7dd;
+  color: #163d67;
+  padding: 8px 14px;
+  border-radius: 3px 7px 4px 2px;
+  cursor: pointer;
+}
+.plan-actions button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.plan-actions p {
+  font-size: 18px;
+  color: #526862;
+  margin: 8px 0;
+}
+.plan-day {
+  font: 700 27px var(--hand);
+  color: #163d67;
+  margin: 0;
+  padding: 24px 0 8px;
+}
+.conflict-detail {
+  color: #805329;
+  font-size: 19px;
+  background: #d8aa6d22;
+  padding: 6px 9px;
+  border-left: 2px solid #ab7446;
+}
+@media (max-width: 650px) {
+  .schedule-views {
+    gap: 18px;
+  }
+  .schedule-views button {
+    font-size: 22px;
+  }
+  .plan-actions button {
+    font-size: 19px;
+  }
+  .plan-actions p {
+    font-size: 17px;
+  }
+}

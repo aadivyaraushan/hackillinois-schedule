@@ -57,3 +57,13 @@ Root build files and `src` follow the standard Vite layout. The approved prototy
 Official logo: https://2021.hackillinois.org/static/media/logo.fff5a98b.svg. Painted ocean artwork was generated for this project. Caveat Variable is bundled locally through @fontsource-variable/caveat (SIL Open Font License). It is used throughout the page and does not request fonts from Google at runtime. This is a student challenge project, not the official HackIllinois website. Home, Mentors and Prizes deliberately link to the 2021 archive.
 
 Saved events are local to this browser, not synced. There is no offline event cache. Native dropdown menus follow the operating system. The live API and linked archive may change independently. No authentication is implemented.
+
+## Personal schedule and calendar export
+
+My schedule shows all starred events grouped by Chicago date. Conflicts compare all starred events, including events hidden by browsing filters.
+
+Export to Google Calendar in All events sends the entire published weekend, regardless of day or filter. In My schedule it sends all favorites. File-download export has been removed.
+
+A dedicated HackIllinois Schedule OAuth web client is configured locally in the existing Operator Google Cloud project. Its public client ID is in ignored `.env.local` as `VITE_GOOGLE_CLIENT_ID`. See [setup record](saved-results/google-calendar-setup.md). The Google consent name remains Operator because that branding is shared with existing clients. The project remains in Testing; access is restricted to configured test users.
+
+No client secret or refresh token is stored. Permission is requested on click. Repeated exports skip existing IDs; this is not ongoing sync, and unstarring does not delete calendar entries.

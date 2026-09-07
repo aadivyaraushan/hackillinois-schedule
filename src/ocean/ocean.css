@@ -12,7 +12,7 @@
   left: -28%;
   width: 156%;
   aspect-ratio: var(--wave-ratio);
-  translate: var(--travel) 0;
+  translate: calc(var(--travel) + var(--scroll-travel, 0vw)) 0;
   transition: translate 2.6s cubic-bezier(0.25, 0.6, 0.3, 1) var(--lag);
 }
 .wave-surge,
@@ -81,5 +81,11 @@
   .wave-surface,
   .wave-surge {
     animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-row {
+    --scroll-travel: 0vw !important;
   }
 }

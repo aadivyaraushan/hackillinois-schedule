@@ -102,3 +102,7 @@ September 7, 2026: inspected local app, 2021 and 2026 schedules in browser. hack
 
 ## Event interaction refinements
 September 7, 2026: downward hand-drawn SVG disclosures reverse when expanded; stronger green hover/focus highlight; per-venue Google Maps links prefer coordinates with name fallback; Caveat names/start times bold and secondary hierarchy lighter. Tests 9 UI + 12 data/calendar pass; build/format/diff pass. Browser validates coordinates, expanded arrow transform, highlight and bold weights. Pointer hover helper unsupported; shared focus rule checked. Separate planning/implementation/planning-ideas.html proposes saved-route navigation, overlap forks, boat time navigation and free-time filtering without implementing them.
+
+
+## September 7, 2026 — schedule comparison refresh
+Fresh Computer Use checks of 2021.hackillinois.org/schedule and 2026.hackillinois.org/schedule: 2026 includes maps, tag/points filters and time-range controls; 2021 uses conventional typography and expanded descriptions. Main hackillinois.org now redirects to the upcoming-edition teaser. Judgment: our ocean design is distinctive, but a 10x usability claim is unsupported without attendee task tests. Main remaining opportunities are scanning clarity and a complete saved itinerary. Full evidence and caveats are in ocean-schedule-review.html.

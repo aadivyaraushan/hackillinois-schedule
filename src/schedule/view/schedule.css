@@ -117,7 +117,7 @@ summary:focus-visible {
   z-index: 2;
   width: min(920px, calc(100% - 150px));
   margin: 15px auto 85px;
-  padding: 40px 60px 45px;
+  padding: 40px 80px 45px;
   background: var(--paper);
   isolation: isolate;
   box-shadow:
@@ -166,28 +166,8 @@ h1 {
   display: grid;
   grid-template-columns: repeat(var(--day-count), minmax(100px, 1fr));
   min-width: calc(var(--day-count) * 100px);
-  padding-top: 40px;
+  padding-top: 4px;
   margin-bottom: 18px;
-}
-.route {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 48px;
-  color: #698080;
-  pointer-events: none;
-}
-.route-boat {
-  position: absolute;
-  top: -8px;
-  left: calc(var(--boat-position) - 17px);
-  width: 34px;
-  height: 40px;
-  pointer-events: none;
-  transition: left 1s ease;
-  color: #365b67;
-  background: #f3f0dfbb;
 }
 .day {
   position: relative;
@@ -198,16 +178,6 @@ h1 {
   padding: 8px 5px;
   color: #657874;
   gap: 3px;
-}
-.day:before {
-  content: "";
-  position: absolute;
-  top: -19px;
-  width: 9px;
-  height: 9px;
-  border: 1px solid #6a8583;
-  background: var(--paper);
-  border-radius: 50%;
 }
 .day input {
   position: absolute;
@@ -331,11 +301,6 @@ h1 {
   color: #637b77;
   opacity: 1;
 }
-.timezone {
-  font-size: 16px;
-  color: #536a68;
-  white-space: nowrap;
-}
 .day-heading {
   display: flex;
   justify-content: space-between;
@@ -391,14 +356,6 @@ h1 {
   letter-spacing: 0;
   color: #52676a;
   margin-top: 3px;
-}
-.time:before {
-  content: "+";
-  position: absolute;
-  left: -16px;
-  top: 46px;
-  color: #83938b;
-  font: 16px var(--hand);
 }
 .next-day {
   display: block;
@@ -565,7 +522,7 @@ h1 {
 @media (max-width: 1000px) {
   .page {
     width: calc(100% - 110px);
-    padding: 36px 40px 45px;
+    padding: 36px 76px 45px;
   }
   .masthead {
     padding: 12px 50px;
@@ -610,7 +567,7 @@ h1 {
   .page {
     width: calc(100% - 38px);
     margin: 9px 19px 50px;
-    padding: 25px 22px 36px;
+    padding: 25px 24px 36px 54px;
     transform: none;
   }
   h1 {
@@ -670,9 +627,6 @@ h1 {
     width: 100%;
     max-width: none;
   }
-  .timezone {
-    font-size: 15px;
-  }
   .event {
     grid-template-columns: 68px minmax(0, 1fr) 30px;
     gap: 8px;
@@ -683,9 +637,6 @@ h1 {
   }
   .time p {
     font-size: 18px;
-  }
-  .time:before {
-    left: -12px;
   }
   .event h2 {
     font-size: 26px;
@@ -723,7 +674,6 @@ h1 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .route-boat,
   .arrow,
   .event {
     transition: none;
@@ -747,8 +697,7 @@ h1 {
     transform: none;
     box-shadow: none;
   }
-  .page:before,
-  .page:after {
+  .page:before {
     display: none;
   }
   .event {
@@ -759,7 +708,6 @@ h1 {
 /* Keep secondary guidance quiet without fading event names or actionable links. */
 .edition,
 .day-date,
-.timezone,
 .day-heading > span,
 .schedule-footer {
   color: #617369;

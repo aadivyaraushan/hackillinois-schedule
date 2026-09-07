@@ -1,6 +1,5 @@
-import { eventCalendar } from "../export/calendar.js";
 import React from "react";
-import { dayKey, formatTime, typeLabel } from "../data/events.js";
+import { dayKey, formatDay, formatTime, typeLabel } from "../data/events.js";
 function safeUrl(value) {
   try {
     const url = new URL(value);
@@ -32,23 +31,17 @@ function Description({ text }) {
     );
   });
 }
-function calendar(event) {
-  const url = URL.createObjectURL(
-    new Blob([eventCalendar(event)], {
-      type: "text/calendar;charset=utf-8",
-    }),
-  );
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "hackillinois-event.ics";
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-export default function EventCard({ event, saved, onToggle, now }) {
+export default function EventCard({
+  event,
+  saved,
+  onToggle,
+  now,
+  conflicts = [],
+}) {
   const map = safeUrl(event.mapImageUrl);
   const ongoing = now >= event.startTime * 1000 && now < event.endTime * 1000;
   return (
-    <article className="event">
+    <article className="event" id={`event-${event.eventId}`}>
       <div className="time">
         <time dateTime={new Date(event.startTime * 1000).toISOString()}>
           {formatTime(event.startTime)}
@@ -66,6 +59,9 @@ export default function EventCard({ event, saved, onToggle, now }) {
         <div className={`kind kind-${event.eventType.toLowerCase()}`}>
           {typeLabel(event.eventType)}
           {ongoing && <span className="live">Happening now</span>}
+          {conflicts.length > 0 && (
+            <span className="overlap-note">Overlaps a saved event</span>
+          )}
           {event.isAsync && <span>· Flexible timing</span>}
         </div>
         <details>
@@ -113,10 +109,23 @@ export default function EventCard({ event, saved, onToggle, now }) {
                   View venue map ↗
                 </a>
               )}
-              <button onClick={() => calendar(event)}>Add to calendar ↓</button>
             </div>
           </div>
         </details>
+        {conflicts.map((other) => {
+          const overlapStart = Math.max(event.startTime, other.startTime);
+          const overlapEnd = Math.min(event.endTime, other.endTime);
+          const startDay = dayKey(overlapStart);
+          const endDay = dayKey(overlapEnd);
+          const dateOptions = { month: "short", day: "numeric" };
+          return (
+            <p className="conflict-detail" key={other.eventId}>
+              Conflict with {other.name} from {formatTime(overlapStart)} to{" "}
+              {formatTime(overlapEnd)} · {formatDay(startDay, dateOptions)}
+              {startDay !== endDay && `–${formatDay(endDay, dateOptions)}`}
+            </p>
+          );
+        })}
         <div className="locations">
           {event.locations.length ? (
             event.locations.map((location, index) => (

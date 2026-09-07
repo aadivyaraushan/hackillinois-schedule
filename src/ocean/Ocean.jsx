@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import waves from "./artwork/wave-layers.png";
 import "./ocean.css";
 const bands = [
@@ -6,7 +6,9 @@ const bands = [
   [670, 354],
   [1010, 526],
 ];
-export default function Ocean({ dayIndex, dayCount, paused }) {
+export default function Ocean({ dayIndex, dayCount, paused, progress = 0 }) {
+  const lastProgress = useRef(progress);
+  if (!paused) lastProgress.current = progress;
   // The crop and container share a ratio, so the crests never flatten.
   const position = dayCount > 1 ? 1 - (2 * dayIndex) / (dayCount - 1) : 0;
   return (
@@ -26,6 +28,7 @@ export default function Ocean({ dayIndex, dayCount, paused }) {
               "--top": `calc(-12px + ${i * 14}vh)`,
               "--wave-ratio": `1024 / ${height}`,
               "--travel": `${position * (5 + i * 1.5)}vw`,
+              "--scroll-travel": `${lastProgress.current * (i % 2 ? 3 : -3)}vw`,
               "--lag": `${i * 0.075}s`,
               "--period": `${6 + i * 0.8}s`,
               "--phase": `${-i * 1.3}s`,

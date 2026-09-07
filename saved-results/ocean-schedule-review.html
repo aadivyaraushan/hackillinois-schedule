@@ -1,4 +1,576 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Working HackIllinois schedule — handoff</title><style>:root{color-scheme:light dark}body{font:16px/1.6 system-ui;max-width:960px;margin:auto;padding:24px}h1,h2{line-height:1.2}h2{font-size:22px;margin-top:30px}a{color:light-dark(#225c78,#a2d7ef)}.result{border:1px solid #8886;padding:20px;border-radius:10px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;vertical-align:top;padding:10px;border-bottom:1px solid #8884}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#8882;padding:16px;font-size:12px}li{margin:8px 0}@media(max-width:600px){td,th{display:block;padding:6px}}</style><h1>Working HackIllinois schedule</h1><p>September 7, 2026 · branch schedule-app</p><div class="result"><strong>Latest refinements complete:</strong> drawn downward expand arrows, stronger event highlighting, Google Maps actions beside each venue, and bolder names/start times with quieter secondary text. <a href="http://127.0.0.1:5173/">Open app</a> · <a href="../planning/implementation/planning-ideas.html">Planning and ocean concepts</a>. Concepts are proposals only; no deployment was made.</div><h2>Event interaction refinements — September 7, 2026</h2><p>User requested three concrete UI changes plus ideation. Changed src/schedule/view/EventCard.jsx: replaced diagonal disclosure character with a hand-drawn SVG arrow, and added separate Google Maps links for each venue outside the expandable details. Links prefer valid coordinates; missing/invalid coordinates fall back to the location name. Missing locations show text without a fabricated link.</p><p>Changed src/schedule/view/schedule.css: arrow rotates 180° when expanded, hover and keyboard focus use the same stronger green paper tint and left rule; titles and start times use weight 700; categories use reduced opacity and secondary labels quieter color. Caveat is retained throughout. Desktop and narrow overrides updated. Changed src/schedule/testing/Schedule.ui.test.jsx: two new integration tests cover multi-venue destinations, name fallback and absent locations. Updated planning/implementation/react-schedule-plan.html, saved-results/ocean-schedule-research.md and this report. Added planning/implementation/planning-ideas.html with illustrated proposals.</p><pre>https://www.google.com/maps/search/?api=1&amp;query=40.113812%2C-88.224937
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Working HackIllinois schedule — handoff</title><style>:root{color-scheme:light dark}body{font:16px/1.6 system-ui;max-width:960px;margin:auto;padding:24px}h1,h2{line-height:1.2}h2{font-size:22px;margin-top:30px}a{color:light-dark(#225c78,#a2d7ef)}.result{border:1px solid #8886;padding:20px;border-radius:10px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;vertical-align:top;padding:10px;border-bottom:1px solid #8884}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#8882;padding:16px;font-size:12px}li{margin:8px 0}@media(max-width:600px){td,th{display:block;padding:6px}}</style><section class="result"><h2>Latest: OAuth configured, Google-only whole-weekend export</h2><p><strong>Implemented and connected locally.</strong> Created a dedicated HackIllinois Schedule web OAuth client in the existing Operator project, per explicit user choice. Allowed localhost:5173 and 127.0.0.1:5173. Google Calendar API was already enabled. Configured the public client ID in ignored .env.local; no secret was copied. Existing Android/Desktop clients and shared Operator branding were preserved.</p><p><strong>Live write pending:</strong> requested permission to export the user's 10 currently starred events. No real calendar write has been made yet. Google Cloud remains External / Testing; the account is already a test user. Google showed an incomplete-branding warning despite the required contact/name fields being filled. The library loads and the app button is enabled, but actual consent success is not yet verified. No public OAuth publishing or app deployment was performed.</p><h3>Changes</h3><ul><li>src/App.jsx: Google export now appears in both views; All events passes the complete events array regardless of day/filter, My schedule passes savedEvents. Export component resets status between views.</li><li>src/schedule/google/GoogleExport.jsx: removed download fallback copy; describes export of events rather than only favorites.</li><li>src/schedule/testing/Schedule.ui.test.jsx: replaced file-download assertions with integrated Google export checks proving three events across days exported under a single-type filter, then one favorite exported in My schedule. Confirms no Download controls remain.</li><li>Deleted src/schedule/export/calendar.js and calendar.test.js: obsolete file export and its tests; no production callers remain.</li><li>package.json: removed the obsolete calendar-file test path.</li><li>.env.local: local-only public OAuth client setting, confirmed ignored by Git.</li><li>README.md, saved-results/google-calendar-setup.md and planning/implementation/react-schedule-plan.html: record actual cloud configuration, new export scope, and pending live verification.</li><li>This report: updated handoff.</li></ul><h3>Checks</h3><p>Regression was RED first: All events lacked Export to Google Calendar. After implementation, UI tests PASS 18/18. npm test PASS 12/12 (10 data tests and 2 Google HTTP tests). Production build PASS, 40 modules. Prettier check and git diff --check PASS. Computer Use verified enabled export in All events with text “Exports all 41 events across the weekend, regardless of the selected day or filters.” Source search found only obsolete file-export definitions; removed that module and tests. Old per-event file controls had already been removed.</p><h3>Source</h3><pre>GoogleExport events={mySchedule ? savedEvents : events}</pre><p>Tests use mocked Google authorization and writes. No tokens or secrets are persisted. Live account authorization is the remaining verification boundary. Existing Google entries are skipped by stable ID; no continuous sync or automatic deletes. Before public access, configure deployment origins and resolve Google audience/branding/verification requirements; those are not part of local testing.</p></section><section class="result"><h2>Latest: My schedule, full-plan export, reliable conflicts</h2><p><strong>Ready locally:</strong> My schedule shows all starred events across the weekend, grouped by date, with the requested empty prompt. Conflict warnings name saved events across the full dataset, regardless of filters. One Download schedule button exports all published events in All events, or favorites in My schedule. Per-event download buttons are removed. The wave has neither dots nor stars; the existing card save buttons remain.</p><p><strong>Needs setup:</strong> Google sign-in/export is implemented and tested with mocked Google responses, but no OAuth web client ID exists yet. The real button is disabled with an explanation. <a href="google-calendar-setup.md">Exact setup instructions</a>. No real Google account was connected and no real calendar entries were created. No public deployment or push.</p><h3>Changed files for this request</h3><ul><li>src/App.jsx — explicit All events/My schedule views, grouped all-day saved list, whole-plan download and full-saved-set conflicts.</li><li>src/schedule/view/EventCard.jsx — named conflict time ranges; removes per-event export.</li><li>src/schedule/export/calendar.js and calendar.test.js — multi-event .ics serialization/download; existing escaping/line folding retained and multi-event test added.</li><li>src/schedule/google/calendar.js — authenticated primary-calendar inserts, deterministic SHA-256 IDs, duplicate skipping, request timeout, partial failures and expired-token handling.</li><li>src/schedule/google/GoogleExport.jsx — Google Identity Services loading, user-triggered permission, denied/closed popup feedback, export counts, no token persistence.</li><li>src/schedule/google/calendar.test.js — mock HTTP tests for stable IDs, payload dates, duplicate and partial/401 handling.</li><li>src/schedule/testing/Google.ui.test.jsx — simulated consent success/denial and missing configuration.</li><li>src/schedule/testing/Schedule.ui.test.jsx — whole-weekend favorites/empty state, conflicts hidden by filter, download contents (3 all versus 1 saved) and no sidebar marks.</li><li>src/schedule/route/EventRoute.jsx and route.css — remove sidebar saved-star markup, styles and prop.</li><li>src/schedule/plan-view/plan.css — paper-matching view buttons, export actions, date headings and conflict notes.</li><li>package.json — include Google HTTP tests in npm test.</li><li>.env.example — public client ID setting placeholder, no credentials.</li><li>README.md and saved-results/google-calendar-setup.md — setup, snapshot-export behavior and limitations.</li><li>planning/implementation/react-schedule-plan.html — implementation status and remaining setup.</li><li>saved-results/ocean-schedule-review.html — this handoff. Other uncommitted changes listed in earlier sections belong to prior authorized refinements.</li></ul><h3>Checks</h3><p>Red runs: new My schedule and hidden-filter conflict tests failed before implementation; calendar tests failed on missing scheduleCalendar export; Google tests failed on missing module. Final npm test: 15/15 PASS. npm run test:ui: 18/18 PASS. npm run build: PASS, 40 modules, JS 215.50kB (68.82kB gzip). npm run format:check: PASS. git diff --check: PASS. Source search for savedOnly, saved-stop, Download event, Add to calendar, visible.some and calendar-download found no obsolete production paths (test assertion retains Download event to prove absence).</p><p>Computer Use inspected My schedule with 10 existing user favorites and named overlap notes, then at 390px width. Export controls wrap within the paper; no sidebar marks. Automated download test reads the generated Blob and confirms full-weekend versus saved counts. Empty/multi-day view and filter behavior are checked with fixtures; user favorites were not modified for visual testing. Real OAuth, real Google writes, physical-phone download/import and production consent verification are untested because Google setup is missing.</p><h3>Important limits</h3><p>Google export is a snapshot, not ongoing synchronization. Existing deterministic IDs are skipped: later API changes do not update existing Google entries, and unstarring does not delete them. Deleted Google events may retain an ID. Conflict notes describe published time overlap; they do not choose events or calculate travel time. Tokens exist only in the active callback, not storage. Logs record counts/IDs/statuses without credentials. Export may partially succeed; the UI lists failed names and permits retry without re-adding known IDs. Google testing mode requires added test users; public use may require Google's publishing/verification process.</p><h3>Source excerpts</h3><details><summary>src/schedule/google/calendar.js</summary><pre>import { logger } from &quot;../data/logger.js&quot;;
+export const GOOGLE_SCOPE = &quot;https://www.googleapis.com/auth/calendar.events&quot;;
+export async function exportToGoogle(events, token) {
+  const result = { added: 0, existing: 0, failed: [], authExpired: false };
+  logger.info(&quot;Google export started&quot;, `count=${events.length}`);
+  for (const event of events) {
+    if (result.authExpired) {
+      result.failed.push(event.name);
+      continue;
+    }
+    try {
+      const hash = await crypto.subtle.digest(
+        &quot;SHA-256&quot;,
+        new TextEncoder().encode(`hackillinois-schedule:${event.eventId}`),
+      );
+      const id = [...new Uint8Array(hash)]
+        .map((byte) =&gt; byte.toString(16).padStart(2, &quot;0&quot;))
+        .join(&quot;&quot;);
+      const response = await fetch(
+        &quot;https://www.googleapis.com/calendar/v3/calendars/primary/events&quot;,
+        {
+          method: &quot;POST&quot;,
+          signal: AbortSignal.timeout(15000),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            &quot;Content-Type&quot;: &quot;application/json&quot;,
+          },
+          body: JSON.stringify({
+            id,
+            summary: event.name,
+            description: event.description,
+            location: event.locations
+              .map((item) =&gt; item.description)
+              .join(&quot;, &quot;),
+            start: { dateTime: new Date(event.startTime * 1000).toISOString() },
+            end: { dateTime: new Date(event.endTime * 1000).toISOString() },
+          }),
+        },
+      );
+      if (response.ok) result.added++;
+      else if (response.status === 409) result.existing++;
+      else {
+        result.failed.push(event.name);
+        result.authExpired = response.status === 401;
+        logger.warn(
+          &quot;Google event export failed&quot;,
+          `event=${event.eventId}; status=${response.status}`,
+        );
+      }
+    } catch (error) {
+      result.failed.push(event.name);
+      logger.warn(
+        &quot;Google event export failed&quot;,
+        `event=${event.eventId}; message=${error.message}`,
+      );
+    }
+  }
+  logger.info(
+    &quot;Google export finished&quot;,
+    `added=${result.added}; existing=${result.existing}; failed=${result.failed.length}`,
+  );
+  return result;
+}
+</pre></details><details><summary>src/schedule/google/GoogleExport.jsx</summary><pre>import React, { useEffect, useRef, useState } from &quot;react&quot;;
+import { exportToGoogle, GOOGLE_SCOPE } from &quot;./calendar.js&quot;;
+import { logger } from &quot;../data/logger.js&quot;;
+let scriptPromise;
+function loadGoogle() {
+  if (window.google?.accounts?.oauth2) return Promise.resolve();
+  if (!scriptPromise)
+    scriptPromise = new Promise((resolve, reject) =&gt; {
+      const script = document.createElement(&quot;script&quot;);
+      script.src = &quot;https://accounts.google.com/gsi/client&quot;;
+      script.async = true;
+      const timer = setTimeout(() =&gt; {
+        script.remove();
+        scriptPromise = null;
+        reject(new Error(&quot;Google sign-in timed out. Reload to retry.&quot;));
+      }, 15000);
+      script.onload = () =&gt; {
+        clearTimeout(timer);
+        resolve();
+      };
+      script.onerror = () =&gt; {
+        clearTimeout(timer);
+        script.remove();
+        scriptPromise = null;
+        reject(new Error(&quot;Google sign-in could not load. Reload to retry.&quot;));
+      };
+      document.head.append(script);
+    });
+  return scriptPromise;
+}
+export default function GoogleExport({ events }) {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const [ready, setReady] = useState(false),
+    [busy, setBusy] = useState(false),
+    [message, setMessage] = useState(&quot;&quot;);
+  const mounted = useRef(true),
+    running = useRef(false);
+  useEffect(() =&gt; {
+    mounted.current = true;
+    if (clientId)
+      loadGoogle()
+        .then(() =&gt; {
+          if (mounted.current) setReady(true);
+        })
+        .catch((error) =&gt; {
+          logger.warn(&quot;Google sign-in load failed&quot;, error.message);
+          if (mounted.current) setMessage(error.message);
+        });
+    return () =&gt; {
+      mounted.current = false;
+    };
+  }, [clientId]);
+  function exportSchedule() {
+    if (running.current || !events.length) return;
+    const snapshot = [...events];
+    running.current = true;
+    setBusy(true);
+    setMessage(&quot;Waiting for Google permission…&quot;);
+    function finish(text) {
+      running.current = false;
+      if (mounted.current) {
+        setBusy(false);
+        setMessage(text);
+      }
+    }
+    try {
+      const oauth = window.google.accounts.oauth2;
+      const client = oauth.initTokenClient({
+        client_id: clientId,
+        scope: GOOGLE_SCOPE,
+        include_granted_scopes: false,
+        error_callback: () =&gt;
+          finish(&quot;Google sign-in was closed or blocked. You can try again.&quot;),
+        callback: async (response) =&gt; {
+          if (
+            response.error ||
+            !response.access_token ||
+            !oauth.hasGrantedAllScopes(response, GOOGLE_SCOPE)
+          ) {
+            finish(
+              &quot;Calendar permission was not granted. Nothing was exported.&quot;,
+            );
+            return;
+          }
+          if (mounted.current)
+            setMessage(`Exporting ${snapshot.length} events…`);
+          try {
+            const result = await exportToGoogle(
+              snapshot,
+              response.access_token,
+            );
+            finish(
+              `${result.added} added; ${result.existing} already in Google Calendar.${result.failed.length ? ` ${result.failed.length} not exported: ${result.failed.join(&quot;, &quot;)}. ${result.authExpired ? &quot;Sign in again and retry.&quot; : &quot;Retry to add the remaining events.&quot;}` : &quot;&quot;}`,
+            );
+          } catch (error) {
+            logger.warn(&quot;Google export stopped&quot;, error.message);
+            finish(
+              &quot;Export could not finish. Retry safely; existing events will be skipped.&quot;,
+            );
+          }
+        },
+      });
+      client.requestAccessToken({ prompt: &quot;select_account&quot; });
+    } catch (error) {
+      logger.warn(&quot;Google sign-in failed&quot;, error.message);
+      finish(&quot;Google sign-in could not open. Reload and try again.&quot;);
+    }
+  }
+  return (
+    &lt;div className=&quot;google-export&quot;&gt;
+      &lt;button
+        onClick={exportSchedule}
+        disabled={!clientId || !ready || busy || !events.length}
+      &gt;
+        {busy ? &quot;Exporting…&quot; : &quot;Export to Google Calendar&quot;}
+      &lt;/button&gt;
+      {!clientId &amp;&amp; (
+        &lt;p&gt;
+          Google Calendar export is not available yet. You can download your
+          schedule below.
+        &lt;/p&gt;
+      )}
+      {clientId &amp;&amp; (
+        &lt;p&gt;
+          Adds these starred events to your primary calendar. Existing exports
+          are skipped. Unstarring here does not remove calendar events.
+        &lt;/p&gt;
+      )}
+      {message &amp;&amp; &lt;p role=&quot;status&quot;&gt;{message}&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+</pre></details><details><summary>src/schedule/export/calendar.js</summary><pre>const escapeText = (value) =&gt;
+  String(value)
+    .replace(/\\/g, &quot;\\\\&quot;)
+    .replace(/\r?\n/g, &quot;\\n&quot;)
+    .replace(/,/g, &quot;\\,&quot;)
+    .replace(/;/g, &quot;\\;&quot;);
+const timestamp = (seconds) =&gt;
+  new Date(seconds * 1000)
+    .toISOString()
+    .replace(/[-:]/g, &quot;&quot;)
+    .replace(/\.\d{3}/, &quot;&quot;);
+// Calendar lines are limited in bytes, not characters; preserve complete emoji.
+function foldLine(line) {
+  const encoder = new TextEncoder();
+  const lines = [];
+  let current = &quot;&quot;;
+  let size = 0;
+  for (const character of line) {
+    const bytes = encoder.encode(character).length;
+    if (size + bytes &gt; 75) {
+      lines.push(current);
+      current = &quot; &quot;;
+      size = 1;
+    }
+    current += character;
+    size += bytes;
+  }
+  return [...lines, current].join(&quot;\r\n&quot;);
+}
+export function scheduleCalendar(events, createdAt = Date.now() / 1000) {
+  return (
+    [
+      &quot;BEGIN:VCALENDAR&quot;,
+      &quot;VERSION:2.0&quot;,
+      &quot;PRODID:-//HackIllinois Schedule//EN&quot;,
+      ...events.flatMap((event) =&gt; [
+        &quot;BEGIN:VEVENT&quot;,
+        `UID:${escapeText(event.eventId)}@hackillinois-schedule`,
+        `DTSTAMP:${timestamp(createdAt)}`,
+        `DTSTART:${timestamp(event.startTime)}`,
+        `DTEND:${timestamp(event.endTime)}`,
+        `SUMMARY:${escapeText(event.name)}`,
+        `DESCRIPTION:${escapeText(event.description)}`,
+        `LOCATION:${escapeText(event.locations.map((location) =&gt; location.description).join(&quot;, &quot;))}`,
+        &quot;END:VEVENT&quot;,
+      ]),
+      &quot;END:VCALENDAR&quot;,
+    ]
+      .map(foldLine)
+      .join(&quot;\r\n&quot;) + &quot;\r\n&quot;
+  );
+}
+
+export function eventCalendar(event, createdAt = Date.now() / 1000) {
+  return scheduleCalendar([event], createdAt);
+}
+export function downloadCalendar(events) {
+  const url = URL.createObjectURL(
+    new Blob([scheduleCalendar(events)], {
+      type: &quot;text/calendar;charset=utf-8&quot;,
+    }),
+  );
+  const link = document.createElement(&quot;a&quot;);
+  link.href = url;
+  link.download = &quot;hackillinois-schedule.ics&quot;;
+  link.click();
+  setTimeout(() =&gt; URL.revokeObjectURL(url), 1000);
+}
+</pre></details><h3>Manual checks</h3><ol><li>Save overlapping events of different types. Filter to one type: its warning must still name the hidden saved event.</li><li>Star events on two days. My schedule must show both dates. Unstar every event to see the empty-state prompt.</li><li>Download schedule in each view and inspect the imported event count. All events ignores browsing filters; My schedule includes all favorites.</li><li>Follow Google setup, export one saved event with your consent, then repeat to verify duplicate skipping on a real account.</li><li>Scroll the wave past a saved card; it should show only the boat and wave, with the save star remaining on the card.</li></ol></section><section class="result"><h2>Latest: end-of-page jump fixed; ordinary dots removed</h2><p>Cause verified in EventRoute.jsx: an atBottom branch assigned the last event directly when the page was within 2px of the bottom. Replaced it with a continuous reading-line adjustment over the last viewport of scroll distance. Deleted the old branch; no alternate mode. Ordinary stop spans now have no dot; saved stars remain. Wave stop targets retain keyboard labels and click behavior.</p><p>Files: src/schedule/route/EventRoute.jsx (continuous scroll calculation and dot removal), src/schedule/testing/Schedule.ui.test.jsx (regression across scroll positions 797→798→800 with real-layout-shaped event offsets), this report. Regression first failed: a 1px scroll caused a jump greater than the 10px bound; after the fix UI suite passed 12/12. npm run build PASS, 37 modules. git diff --check PASS. Computer Use confirmed zero dot characters on the local route. End-scroll continuity was checked through integrated simulated scroll, not a physical wheel recording. Data/calendar tests not repeated because those modules are unchanged. Searched the route's bottom handling: the only direct end jump was removed. No new logs for scroll frames to avoid noise.</p><pre>blend = max(0, 1 - remainingScroll / finalStretch)
+line = readingLine + max(0, lastTopAtBottom - readingLine) * blend
+next = index + fraction</pre><h2>Requested honest comparison</h2><p><strong>My judgment: no, this is not yet a 10× better schedule.</strong> It is a more distinctive interpretation of your ocean brief, with useful planning features. That is a design opinion, not a measured usability result.</p><p>Freshly inspected <a href="https://2021.hackillinois.org/schedule">2021</a> and <a href="https://2026.hackillinois.org/schedule">2026</a> in Computer Use. The current main domain redirects to a 2027 teaser linking the 2026 edition. 2021 has conventional readable type, date navigation, category legend and visible descriptions. 2026 has an illustrated notebook, date tabs, venue map links, tag/points filters and time-range controls. Neither should be described as an unstyled baseline; 2026 already has substantial art direction.</p><ul><li><strong>What ours contributes:</strong> a coherent paper/ocean treatment and boat that follows reading position; search, browser-persistent saved events, calendar export, overlap notes and collapsed details are verified in our source/tests. I did not exhaustively audit either official site's hidden features, so this is not proof those capabilities are all exclusive.</li><li><strong>Readability tradeoff:</strong> Caveat throughout is expressive, but in my judgment conventional type on the official pages is easier for scanning detailed descriptions and times. More handwriting is not automatically better usability. Our mobile margins now protect the boat but narrow event text.</li><li><strong>Planning still incomplete:</strong> our route marks reading position, not what to attend next. Overlap notes only consider the filtered day; there is no complete cross-day saved itinerary or time-window filter. 2026 already exposes a time-range filter. Next high-value work would be a coherent saved itinerary and conflict handling across the whole event set.</li><li><strong>Evidence gap:</strong> there has been no attendee task-timing comparison, physical-phone performance test or full accessibility check. The wave image alone is 2.55MB (build output), but I have not measured load-time impact. Recent edge-case fixes show that animation reliability still needs testing with real scrolling.</li></ul><p>My priority would be easier scanning and better saved-event planning, then measured phone testing—not adding another decorative interaction. A fair comparison would ask attendees to find a workshop, locate its room, save two compatible events and return to their plan on a phone, and compare completion time and mistakes.</p><p>Manual reproduction: scroll slowly through the final two cards and reverse direction; boat motion should remain continuous. Confirm no ordinary dots, while saving an event still adds a star.</p></section><section class="result"><h2>Latest: wider paper margins, one sheet</h2><p>Requested: keep the sideways boat inside the paper and remove doubled corners. Changed src/schedule/view/schedule.css: horizontal padding 60→80px on desktop, 40→76px at intermediate widths, mobile left 22→54px and right 22→24px. Removed the obsolete print selector for the extra layer. Changed src/schedule/view/paper.css: deleted the entire page::after backdrop that produced the overlapping cutout; paper texture and folds remain on ::before. This report is the third changed file.</p><pre>desktop: padding: 40px 80px 45px;
+intermediate: padding: 36px 76px 45px;
+mobile: padding: 25px 24px 36px 54px;</pre><p>Checks: npm run build PASS (37 modules); git diff --check PASS; both CSS files formatted. Computer Use inspected desktop and 390px phone layout. At phone width the boat left edge was 29.49px versus paper 18.99px (10.50px inside); page::after content was none. Wider margins cause earlier text wrapping on phones, visible in the screenshot. All scroll positions and physical devices were not checked. New tests and logging skipped for this CSS-only visual adjustment; event logic unchanged. Searched page styling at every breakpoint and updated desktop, intermediate and mobile rules; print retains its compact layout with the route hidden.</p><p>Manual check: scroll through the wave bends at phone width, and inspect the top corners. There should be one paper edge with the boat contained inside.</p></section><section class="result"><h2>Latest: sideways boat follows the dark blue wave</h2><p>Changed src/schedule/route/EventRoute.jsx to use the same 72px quadratic bends as the drawn wave: the boat shifts across the curve and tilts with its slope as scrolling changes its position. Changed route.css to deep blue #163d67 at 90% opacity and anchor the rotated hull against the wave; mobile sizing remains compact. No independent idle animation was added: this motion follows scrolling.</p><pre>drift = direction * 36 * t * (1 - t)
+slope = direction * (1 - 2 * t) / 2
+tilt = -90 - Math.atan(slope) * 180 / Math.PI</pre><p>Existing UI tests: 11/11 passed. Production build passed. Computer Use inspected the sideways boat and darker curve on Saturday and exercised the Brunch stop. New style-only tests skipped because this is a reversible visual adjustment; existing scroll integration tests rerun. No separate logging for the visual math. No new external API or dependencies. Phone-specific visual recheck not repeated for this small change. Manual check: scroll slowly and watch the hull shift and tilt along successive bends. This report is the third changed file.</p></section><section class="result"><h2>Current result: one schedule, inline boat</h2><p>The approved revision is complete locally. Both standalone route layouts and duplicate event labels are removed. A wave runs beside the original time column, with a boat driven by scrolling and starred saved stops. Clicking a stop opens the original event. Overlap notes appear on the original cards.</p><p>Changed in this revision: <code>src/App.jsx</code> nests the route inside the event section and supplies overlap flags; <code>src/schedule/route/EventRoute.jsx</code> measures real card offsets, places the boat and icon-only stops, and removes the repeated list/drawer; <code>src/schedule/route/route.css</code> replaces fixed panels with a paper-margin wave at all sizes; <code>src/schedule/view/EventCard.jsx</code> shows overlap notes; <code>src/schedule/view/schedule.css</code> removes obsolete plus marks beside times; <code>src/schedule/testing/Schedule.ui.test.jsx</code> checks inline placement, no bottom control and no duplicated title. Both implementation planning HTML files and this report are updated. Ocean changes from the preceding prototype remain unchanged.</p><p>Evidence: new placement assertion failed first (10 passed, 1 failed: route outside event section); after implementation UI tests passed 11/11. <code>npm run build</code> passed, 37 modules; <code>npm run format:check</code> passed; <code>git diff --check</code> passed. Data/calendar tests were not repeated this revision because those modules did not change (previous run 12/12). Computer Use inspected normal and 390px layouts; clicking Company Expo opened it and updated the active stop and boat (top 430.713px), with route parent “Schedule events” and no bottom bar. No physical-phone, screen-reader, or manual wheel check; simulated scroll is covered by the UI test.</p><p>Remaining limits: stars represent saved events within the current day and filters; no geography or elapsed-time scale implied. No API/storage changes, dependency additions, deployment, or push. Existing route-click and missing-target logging remains; per-frame logging is intentionally omitted. Searched old route-toggle, compact and repeated-list code: removed the replaced UI. Searched time:before: removed both desktop and mobile obsolete plus-mark rules.</p><h3>Focused source</h3><pre>import React, { useEffect, useState } from &quot;react&quot;;
+import { logger } from &quot;../data/logger.js&quot;;
+import &quot;./route.css&quot;;
+
+export default function EventRoute({ events, saved, paused, onProgress }) {
+  const [position, setPosition] = useState(0);
+  const [anchors, setAnchors] = useState([]);
+  // Depend on identities rather than the filter&#x27;s newly allocated array.
+  const ids = JSON.stringify(events.map((event) =&gt; event.eventId));
+  useEffect(() =&gt; {
+    const eventIds = JSON.parse(ids);
+    let frame;
+    function measure() {
+      const tops = eventIds.map(
+        (id) =&gt;
+          document.getElementById(`event-${id}`)?.getBoundingClientRect().top ??
+          Infinity,
+      );
+      const cards = eventIds.map((id) =&gt;
+        document.getElementById(`event-${id}`),
+      );
+      // offsetTop stays in the paper&#x27;s coordinate system even when it is rotated.
+      setAnchors(cards.map((card) =&gt; (card?.offsetTop ?? 0) + 48));
+      const line = Math.min(window.innerHeight * 0.3, 220);
+      let index = 0;
+      while (index &lt; tops.length - 1 &amp;&amp; tops[index + 1] &lt;= line) index++;
+      const gap = tops[index + 1] - tops[index];
+      const fraction =
+        Number.isFinite(gap) &amp;&amp; gap &gt; 0
+          ? Math.max(0, Math.min(1, (line - tops[index]) / gap))
+          : 0;
+      const atBottom =
+        window.scrollY &gt; 0 &amp;&amp;
+        window.scrollY + window.innerHeight &gt;=
+          document.documentElement.scrollHeight - 2;
+      const next = atBottom
+        ? Math.max(0, eventIds.length - 1)
+        : index + fraction;
+      setPosition(next);
+      onProgress(eventIds.length &gt; 1 ? next / (eventIds.length - 1) : 0);
+    }
+    function schedule() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    }
+    measure();
+    window.addEventListener(&quot;scroll&quot;, schedule, { passive: true });
+    window.addEventListener(&quot;resize&quot;, schedule);
+    // Expanded descriptions can change heights without a window resize.
+    const observer =
+      typeof ResizeObserver !== &quot;undefined&quot;
+        ? new ResizeObserver(schedule)
+        : null;
+    const section = document.querySelector(&#x27;[aria-label=&quot;Schedule events&quot;]&#x27;);
+    if (section) observer?.observe(section);
+    return () =&gt; {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(&quot;scroll&quot;, schedule);
+      window.removeEventListener(&quot;resize&quot;, schedule);
+      observer?.disconnect();
+    };
+  }, [ids, onProgress]);
+  const active = Math.min(Math.floor(position), events.length - 1);
+  function go(event) {
+    const card = document.getElementById(`event-${event.eventId}`);
+    if (!card) {
+      logger.warn(&quot;Route target missing&quot;, event.eventId);
+      return;
+    }
+    logger.debug(&quot;Route stop selected&quot;, event.eventId);
+    card.querySelector(&quot;details&quot;).open = true;
+    card.querySelector(&quot;summary&quot;).focus({ preventScroll: true });
+    card.scrollIntoView({
+      block: &quot;start&quot;,
+      behavior:
+        paused ||
+        window.matchMedia?.(&quot;(prefers-reduced-motion: reduce)&quot;).matches
+          ? &quot;instant&quot;
+          : &quot;smooth&quot;,
+    });
+  }
+  if (!events.length) return null;
+  const start = anchors[Math.max(0, active)] ?? 48;
+  const end = anchors[active + 1] ?? start;
+  const boatTop = start + (end - start) * (position - Math.floor(position));
+  return (
+    &lt;nav className=&quot;event-route&quot; aria-label=&quot;Event route&quot;&gt;
+      &lt;div className=&quot;drawn-current&quot; aria-hidden=&quot;true&quot; /&gt;
+      &lt;svg
+        className=&quot;sailing-boat&quot;
+        viewBox=&quot;0 0 40 45&quot;
+        aria-hidden=&quot;true&quot;
+        style={{ top: boatTop - 22 }}
+      &gt;
+        &lt;path
+          d=&quot;M20 3 7 28h11zm4 0v25h12zM5 32l7 8h19l6-8zM22 1v31M5 44q7-5 14 0t16 0&quot;
+          fill=&quot;#f3f0df&quot;
+          stroke=&quot;currentColor&quot;
+          strokeWidth=&quot;1.7&quot;
+        /&gt;
+        &lt;path d=&quot;m5 32 7 8h19l6-8z&quot; fill=&quot;#cba577&quot; /&gt;
+      &lt;/svg&gt;
+      {events.map((event, index) =&gt; (
+        &lt;button
+          key={event.eventId}
+          className={`route-stop ${saved.has(event.eventId) ? &quot;saved-stop&quot; : &quot;&quot;}`}
+          style={{ top: (anchors[index] ?? 48) - 22 }}
+          aria-label={`Go to ${event.name}`}
+          aria-current={index === active ? &quot;step&quot; : undefined}
+          onClick={() =&gt; go(event)}
+          title={saved.has(event.eventId) ? `Saved: ${event.name}` : event.name}
+        &gt;
+          &lt;span aria-hidden=&quot;true&quot;&gt;{saved.has(event.eventId) ? &quot;★&quot; : &quot;·&quot;}&lt;/span&gt;
+        &lt;/button&gt;
+      ))}
+    &lt;/nav&gt;
+  );
+}
+</pre><p>Manual check: scroll a day; open a long event; star it; change day and filters. The boat should remain alongside the original list, saved stars should appear along the wave, and no bottom bar should cover events.</p></section><h2>Earlier implementation records (superseded where noted above)</h2><section class="result"><h2>Scroll route prototype — September 7</h2><p><strong>Implemented locally; mobile design needs revision.</strong> User observed redundancy in the bottom event bar. Replacement options are in the planning ideas file; none selected yet. The route follows the visible events of the selected day and filters, not a cross-day itinerary. Saved stops are starred; saved time overlaps are labeled.</p><p>Computer Use: compact route click opened Company Expo, moved the page and boat (left 12.457%), and updated active stop. Desktop route click selected Opening Ceremony (boat top 269.172px). Desktop screenshot inspected; phone sizing was opened, but full phone flow and manual wheel scrolling were not checked. Automated scroll-event geometry verifies reading-position updates.</p><p>Checks: initial route test failed because the route did not exist (9 pass, 1 fail). Final UI suite 11/11 passed. A later flaky initial-position assertion was fixed by supplying real-layout-shaped geometry in the test instead of jsdom zero rectangles. Data/calendar suite 12/12 passed. Build passed (37 modules). Format check and git diff --check passed before final test-only edit, which was formatted. No separate lint command configured.</p><p>Limitations: route advances by event order, not elapsed clock time or geography; overlap labels cover visible saved events only. No new API/schema/storage contract. Existing request logging retained; route clicks and missing targets logged. Scroll-frame logging omitted to avoid noise. Ocean scrolling respects reduced motion; explicit pause holds its progress. Native phone and reduced-motion runtime checks remain unverified. No deployment or push in this update.</p><h3>Changed files</h3><ul><li><code>src/App.jsx</code></li><li><code>src/schedule/route/EventRoute.jsx</code></li><li><code>src/schedule/route/route.css</code></li><li><code>src/schedule/view/EventCard.jsx</code></li><li><code>src/schedule/view/schedule.css</code></li><li><code>src/ocean/Ocean.jsx</code></li><li><code>src/ocean/ocean.css</code></li><li><code>src/schedule/testing/Schedule.ui.test.jsx</code></li><li><code>planning/implementation/react-schedule-plan.html</code></li><li><code>planning/implementation/planning-ideas.html</code></li></ul><p>App mounts route and shares progress with ocean; route component measures cards and handles stop navigation; route CSS adds desktop/compact layouts. Event cards get target IDs. Schedule CSS removes obsolete decorative boat rules. Ocean JSX/CSS adds gentle opposite layer travel. UI tests cover scrolling, jumping, empty filters, saved overlaps and day changes. Plan files record implemented scope and pending mobile options. This report is the updated handoff.</p><h3>Focused implementation</h3><pre>import React, { useEffect, useRef, useState } from &quot;react&quot;;
+import { logger } from &quot;../data/logger.js&quot;;
+import { formatTime } from &quot;../data/events.js&quot;;
+import &quot;./route.css&quot;;
+
+export default function EventRoute({ events, saved, paused, onProgress }) {
+  const [position, setPosition] = useState(0);
+  const [expanded, setExpanded] = useState(false);
+  const list = useRef(null);
+  // Depend on identities rather than the filter&#x27;s newly allocated array.
+  const ids = JSON.stringify(events.map((event) =&gt; event.eventId));
+  useEffect(() =&gt; {
+    const eventIds = JSON.parse(ids);
+    let frame;
+    function measure() {
+      const tops = eventIds.map(
+        (id) =&gt;
+          document.getElementById(`event-${id}`)?.getBoundingClientRect().top ??
+          Infinity,
+      );
+      const line = Math.min(window.innerHeight * 0.3, 220);
+      let index = 0;
+      while (index &lt; tops.length - 1 &amp;&amp; tops[index + 1] &lt;= line) index++;
+      const gap = tops[index + 1] - tops[index];
+      const fraction =
+        Number.isFinite(gap) &amp;&amp; gap &gt; 0
+          ? Math.max(0, Math.min(1, (line - tops[index]) / gap))
+          : 0;
+      const atBottom =
+        window.scrollY &gt; 0 &amp;&amp;
+        window.scrollY + window.innerHeight &gt;=
+          document.documentElement.scrollHeight - 2;
+      const next = atBottom
+        ? Math.max(0, eventIds.length - 1)
+        : index + fraction;
+      setPosition(next);
+      onProgress(eventIds.length &gt; 1 ? next / (eventIds.length - 1) : 0);
+    }
+    function schedule() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    }
+    measure();
+    window.addEventListener(&quot;scroll&quot;, schedule, { passive: true });
+    window.addEventListener(&quot;resize&quot;, schedule);
+    // Expanded descriptions can change heights without a window resize.
+    const observer =
+      typeof ResizeObserver !== &quot;undefined&quot;
+        ? new ResizeObserver(schedule)
+        : null;
+    const section = document.querySelector(&#x27;[aria-label=&quot;Schedule events&quot;]&#x27;);
+    if (section) observer?.observe(section);
+    return () =&gt; {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(&quot;scroll&quot;, schedule);
+      window.removeEventListener(&quot;resize&quot;, schedule);
+      observer?.disconnect();
+    };
+  }, [ids, onProgress]);
+  const active = Math.min(Math.floor(position), events.length - 1);
+  useEffect(() =&gt; {
+    if (list.current)
+      list.current.scrollTop = Math.max(
+        0,
+        active * 72 - list.current.clientHeight / 2 + 36,
+      );
+  }, [active, expanded]);
+  function go(event) {
+    const card = document.getElementById(`event-${event.eventId}`);
+    if (!card) {
+      logger.warn(&quot;Route target missing&quot;, event.eventId);
+      return;
+    }
+    logger.debug(&quot;Route stop selected&quot;, event.eventId);
+    card.querySelector(&quot;details&quot;).open = true;
+    card.querySelector(&quot;summary&quot;).focus({ preventScroll: true });
+    card.scrollIntoView({
+      block: &quot;start&quot;,
+      behavior:
+        paused ||
+        window.matchMedia?.(&quot;(prefers-reduced-motion: reduce)&quot;).matches
+          ? &quot;instant&quot;
+          : &quot;smooth&quot;,
+    });
+    setExpanded(false);
+  }
+  if (!events.length) return null;
+  const current = events[active] || events[0];
+  return (
+    &lt;nav
+      className={`event-route ${expanded ? &quot;is-expanded&quot; : &quot;&quot;}`}
+      aria-label=&quot;Event route&quot;
+    &gt;
+      &lt;button
+        className=&quot;route-toggle&quot;
+        aria-expanded={expanded}
+        onClick={() =&gt; setExpanded(!expanded)}
+      &gt;
+        &lt;span className=&quot;compact-sea&quot; aria-hidden=&quot;true&quot;&gt;
+          &lt;svg viewBox=&quot;0 0 400 24&quot; preserveAspectRatio=&quot;none&quot;&gt;
+            &lt;path
+              d=&quot;M0 17Q25 3 50 17T100 17T150 17T200 17T250 17T300 17T350 17T400 17&quot;
+              fill=&quot;none&quot;
+              stroke=&quot;currentColor&quot;
+              strokeWidth=&quot;1.4&quot;
+            /&gt;
+          &lt;/svg&gt;
+          &lt;svg
+            className=&quot;compact-boat&quot;
+            viewBox=&quot;0 0 40 45&quot;
+            style={{
+              left: `${events.length &gt; 1 ? (position / (events.length - 1)) * 94 : 0}%`,
+            }}
+          &gt;
+            &lt;path
+              d=&quot;M20 3 7 28h11zm4 0v25h12zM5 32l7 8h19l6-8zM22 1v31&quot;
+              fill=&quot;#102e40&quot;
+              stroke=&quot;currentColor&quot;
+              strokeWidth=&quot;1.7&quot;
+            /&gt;
+          &lt;/svg&gt;
+        &lt;/span&gt;
+        {formatTime(current.startTime)} · {current.name}
+        &lt;span&gt; {expanded ? &quot;Close route −&quot; : &quot;Open route +&quot;}&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;div className=&quot;route-heading&quot;&gt;
+        Your day at sea&lt;small&gt;Scroll to sail · ★ saved&lt;/small&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;route-stops&quot; ref={list}&gt;
+        &lt;div className=&quot;route-track&quot; style={{ height: events.length * 72 }}&gt;
+          &lt;svg
+            className=&quot;sailing-boat&quot;
+            viewBox=&quot;0 0 40 45&quot;
+            aria-hidden=&quot;true&quot;
+            style={{ top: 12 + position * 72 }}
+          &gt;
+            &lt;path
+              d=&quot;M20 3 7 28h11zm4 0v25h12zM5 32l7 8h19l6-8zM22 1v31M5 44q7-5 14 0t16 0&quot;
+              fill=&quot;none&quot;
+              stroke=&quot;currentColor&quot;
+              strokeWidth=&quot;1.7&quot;
+            /&gt;
+            &lt;path d=&quot;m5 32 7 8h19l6-8z&quot; fill=&quot;#cba577&quot; /&gt;
+          &lt;/svg&gt;
+          {events.map((event, index) =&gt; {
+            const overlap =
+              saved.has(event.eventId) &amp;&amp;
+              events.some(
+                (other) =&gt;
+                  other.eventId !== event.eventId &amp;&amp;
+                  saved.has(other.eventId) &amp;&amp;
+                  other.startTime &lt; event.endTime &amp;&amp;
+                  event.startTime &lt; other.endTime,
+              );
+            return (
+              &lt;button
+                key={event.eventId}
+                className=&quot;route-stop&quot;
+                aria-label={`Go to ${event.name}`}
+                aria-current={index === active ? &quot;step&quot; : undefined}
+                onClick={() =&gt; go(event)}
+              &gt;
+                &lt;span className=&quot;stop-mark&quot; aria-hidden=&quot;true&quot;&gt;
+                  {saved.has(event.eventId) ? &quot;★&quot; : &quot;·&quot;}
+                &lt;/span&gt;
+                &lt;span&gt;
+                  &lt;time&gt;{formatTime(event.startTime)}&lt;/time&gt;
+                  &lt;span className=&quot;stop-name&quot;&gt;{event.name}&lt;/span&gt;
+                  {overlap &amp;&amp; &lt;small&gt;Overlaps a saved event&lt;/small&gt;}
+                &lt;/span&gt;
+              &lt;/button&gt;
+            );
+          })}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/nav&gt;
+  );
+}
+</pre><h3>Try it</h3><p>Scroll through Friday and watch the boat; open the compact route and choose Company Expo. Save overlapping events, inspect labels, then change day or search for no matches. On desktop wider than 1300px, use the ocean-margin stops. Mobile replacement is awaiting your preferred direction.</p></section><section><h2>September 7 — schedule-wide export and simpler labels</h2><p><strong>Complete:</strong> Export sits beside All events / My schedule, above day selection. Removed both explanatory export paragraphs and all visible Chicago time/CST/CDT labels. Timezone calculations remain unchanged. Live Chrome export reported <strong>0 added; 10 already in Google Calendar.</strong> This verifies duplicate detection with real Google responses; a fresh insertion was not observed in this check.</p><h3>Changed files</h3><ul><li>src/App.jsx: moved the single GoogleExport to schedule-controls; retained all-events versus saved-events input; deleted scope copy and timezone display; shortened saved heading.</li><li>src/schedule/google/GoogleExport.jsx: removed static primary-calendar explanation, retained status and errors.</li><li>src/schedule/plan-view/plan.css: wrapping schedule-level control row; removed old export section spacing.</li><li>src/schedule/view/schedule.css: removed unused timezone rules.</li><li>src/schedule/testing/Schedule.ui.test.jsx: checks export precedes days and removed copy is absent, alongside existing weekend/favorites export assertions.</li><li>planning/implementation/react-schedule-plan.html: recorded placement plan.</li><li>saved-results/google-calendar-setup.md: recorded live duplicate result.</li><li>saved-results/ocean-schedule-review.html: this handoff.</li></ul><h3>Exact checks</h3><ul><li>npm run test:ui -- --run src/schedule/testing/Schedule.ui.test.jsx: RED, 14 passed / 1 failed, expected +0 to be truthy for export-before-day order.</li><li>npm run test:ui: GREEN, 18 passed / 0 failed after placement; repeated after timezone removal with same result.</li><li>npm test: PASS, 12 passed / 0 failed.</li><li>npm run build: PASS after final edits, 39 modules transformed.</li><li>npm run format:check: PASS before timezone-only removal; both final edited files formatted with Prettier.</li><li>git diff --check: PASS after final edits.</li><li>Computer Use: desktop screenshot shows export beside view buttons above days. DOM geometry exportBeforeDays=true. Main visible text timezoneText=false. My schedule heading reads Your starred events.</li><li>Searched src for Chicago/CST/CDT: removed two UI occurrences; retained America/Chicago in data logic and its tests. Searched export components/copy: one GoogleExport call remains, no duplicate paragraphs.</li></ul><h3>Focused code</h3><pre>&lt;div className=&quot;schedule-controls&quot;&gt;
+  &lt;nav className=&quot;schedule-views&quot; aria-label=&quot;Schedule view&quot;&gt;…&lt;/nav&gt;
+  &lt;div className=&quot;plan-actions&quot;&gt;
+    &lt;GoogleExport key={mySchedule ? &quot;saved&quot; : &quot;all&quot;}
+      events={mySchedule ? savedEvents : events} /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre><h3>Limits and manual checks</h3><p>No new logging or failing test for timezone copy deletion: mechanical presentation-only removal; existing timezone tests retained. Mobile wrapping uses flex-wrap but was not visually rechecked in this pass. No deployment performed. OAuth consent uses existing Operator branding and testing audience. Fresh insertion and the in-app browser popup remain unverified; live Chrome duplicate export succeeded.</p><p>Open All events: export should precede Friday/Saturday/Sunday. Change day or filters: export still includes the weekend. Open My schedule: export includes favorites only. Check a narrow window: actions should wrap above the days, without horizontal overflow.</p></section><section><h2>September 7 — requested comparison with prior schedules</h2><p><strong>My judgment: a substantial improvement for personal planning, but I cannot honestly call it 10× better overall.</strong> No attendee task-time study has been run. This is a design judgment based on fresh browser inspection, not a measured multiplier.</p><p>Compared live <a href="https://2021.hackillinois.org/schedule">2021</a>, <a href="https://2026.hackillinois.org/schedule">2026</a>, and localhost:5173. Read their rendered controls and event content; inspected screenshots of both official pages. Viewports differed, so this is not a quantitative density comparison.</p><h3>Where this version wins</h3><p>The current page combines search, favorites across days, named overlap warnings and Google export. These are a useful planning workflow, not just decoration. Neither inspected official schedule exposed an equivalent saved-plan/export workflow in its visible controls. That observation does not establish what their separate mobile apps provide. The paper, handwriting and boat are a distinctive and cohesive direction in my judgment.</p><h3>What still limits the claim</h3><ol><li><strong>Speed of scanning is unproven.</strong> Caveat throughout and generous row spacing give personality, but I suspect they make quick time/location comparison slower than necessary. This is a hypothesis to test, not grounds for throwing away the design.</li><li><strong>Overlap warnings can overstate a problem.</strong> The current page marks Attendee Check-In (2–5) against Company Expo (3–5). Both might be drop-in windows; the code compares whole time ranges and does not know attendance requirements. They overlap mathematically, but that does not prove the attendee cannot do both. Repeated warnings can add noise.</li><li><strong>Public readiness still matters.</strong> Google setup currently uses Operator branding and a testing audience; the verified export was a local 10-existing-events result. This is not evidence that arbitrary attendees can connect on a deployed site. Navigation still points to the 2021 archive.</li><li><strong>The boat helps orientation, not yet decision-making.</strong> It tracks position in the list; it is not a proportional time chart showing duration or free time. It should not be sold as that.</li></ol><p>The 2026 page already has venue map links, tag filters, and a from/to time filter; those basic capabilities are not unique advantages here. Its event cards show points too. The 2021 page clearly separates times and titles. Prior versions have strengths worth retaining.</p><h3>Recommendation</h3><p>Keep the current direction. Before adding more features, test three concrete tasks with a few attendees: locate a workshop and its room; build a three-event plan with an overlap; export that plan. Record completion time and mistakes against the official schedule where the same task is possible. Separately finish public OAuth/deployment readiness. This gives evidence of improvement without an endless feature checklist.</p><p>No source code changed, no new tests/build required for this read-only comparison. This section is the requested human review handoff.</p></section><section><h2>September 7 — exact conflict intervals, interview scope</h2><p><strong>Complete:</strong> conflict notices now show only the shared interval, not the other event’s entire duration. Interview-demo scope acknowledged: public OAuth branding and archive navigation are not blockers for the requested demo.</p><p>Live browser evidence: Startup Workshop / Late Night Snack now reads “Conflict with Late Night Snack from 11:00 PM to 11:30 PM · Feb 27.” An overnight overlap reads “Conflict with Quiet Workspace from 11:00 PM to 12:00 AM · Feb 27–Feb 28.”</p><h3>Files and exact change</h3><ul><li>src/schedule/view/EventCard.jsx: derive overlap start/end, format that interval and its date(s).</li><li>src/schedule/testing/Schedule.ui.test.jsx: existing filtered-out saved-event integration test now checks 5:01 PM–6:00 PM, instead of the other event’s 5:01 PM–7:00 PM duration.</li><li>planning/implementation/react-schedule-plan.html: added bounded interval refinement plan.</li><li>saved-results/ocean-schedule-review.html: updated this report.</li></ul><pre>const overlapStart = Math.max(event.startTime, other.startTime);
+const overlapEnd = Math.min(event.endTime, other.endTime);</pre><h3>Checks</h3><p>RED: npm run test:ui -- --run src/schedule/testing/Schedule.ui.test.jsx — 14 passed, 1 failed on old conflict notice. GREEN: npm run test:ui — 18 passed, 0 failed. npm run build — PASS, 39 modules. git diff --check — PASS. Prettier formatted both changed source files. Computer Use confirmed real daytime and overnight intervals.</p><p>Sibling search: conflict rendering appears only in EventCard; both All events and My schedule reuse it. Existing overlap detection in App remains unchanged. No API changes, schema changes or new logging: this is a small derived-text calculation. No separate unit test added; integration checks exercise the saved/filter/card flow. Fresh mobile screenshot skipped because no layout/styles changed.</p><p>Manual check: star two partially overlapping events, then check both cards and My schedule; the same shared interval should appear in both notices. This remains a time overlap warning, not a judgment that attendance at both is impossible.</p></section><h1>Working HackIllinois schedule</h1><p>September 7, 2026 · branch schedule-app</p><div class="result"><strong>Latest refinements complete:</strong> drawn downward expand arrows, stronger event highlighting, Google Maps actions beside each venue, and bolder names/start times with quieter secondary text. <a href="http://127.0.0.1:5173/">Open app</a> · <a href="../planning/implementation/planning-ideas.html">Planning and ocean concepts</a>. Concepts are proposals only; no deployment was made.</div><h2>Event interaction refinements — September 7, 2026</h2><p>User requested three concrete UI changes plus ideation. Changed src/schedule/view/EventCard.jsx: replaced diagonal disclosure character with a hand-drawn SVG arrow, and added separate Google Maps links for each venue outside the expandable details. Links prefer valid coordinates; missing/invalid coordinates fall back to the location name. Missing locations show text without a fabricated link.</p><p>Changed src/schedule/view/schedule.css: arrow rotates 180° when expanded, hover and keyboard focus use the same stronger green paper tint and left rule; titles and start times use weight 700; categories use reduced opacity and secondary labels quieter color. Caveat is retained throughout. Desktop and narrow overrides updated. Changed src/schedule/testing/Schedule.ui.test.jsx: two new integration tests cover multi-venue destinations, name fallback and absent locations. Updated planning/implementation/react-schedule-plan.html, saved-results/ocean-schedule-research.md and this report. Added planning/implementation/planning-ideas.html with illustrated proposals.</p><pre>https://www.google.com/maps/search/?api=1&amp;query=40.113812%2C-88.224937
 .event details[open] .arrow { transform: rotate(180deg); }
 .event:hover, .event:focus-within { background: #c5d6cc80; }</pre><p>Checks: new location tests failed before implementation (2 failed, 7 passed), then npm run test:ui passed 9/9. npm test passed 12/12. npm run format:check passed. npm run build passed: 35 modules; JS 209.17 kB, CSS 13.59 kB. git diff --check passed. Browser confirmed actual map URL coordinates for Attendee Check-In, expanded arrow matrix(-1,0,0,-1,0,0), highlight rgba(197,214,204,0.5), title/start weights 700. Desktop and narrow expanded screenshots inspected; location links wrap below long names on narrow screens. CSS source check caught and corrected an overly broad edit before final screenshot/build.</p><p>Browser tool does not expose locator.hover; the same highlight rule was verified through focus-within after clicking. Pointer-only hover was not independently automated. Maps URLs were validated against Google's official URL guide and tested as destinations; no physical navigation or indoor-room routing was verified. No new logger needed: rendering and URL creation introduce no asynchronous failure path. Searched arrow rotation and event/mobile styles; old 90° expansion behavior removed. Existing external-link arrows intentionally remain diagonal.</p><p>Manual check: hover or focus an event, expand/collapse it, open a venue link, and inspect the long location line on mobile. Planning concepts: saved stops in the ocean margin with overlap warnings; an optional boat/hour scrubber; free-time filtering; compact next-event note. These remain unimplemented for selection.</p><h2>Requested design comparison — September 7, 2026</h2><p><strong>Assessment: not a 10× improvement.</strong> This is a qualitative design judgment, not a measured usability result. Browser-inspected the local app, 2021 schedule, and 2026 schedule. The main official URL now points to a 2027 hype page, so 2026 is the relevant latest schedule comparison. Its initial empty message resolved into live events; it should not be judged as broken from that initial frame.</p><p>Our strongest differences are the paper-chart direction, independent ocean motion, search, local saved events and calendar export. But our title/date/route/day/filter/search stack delays the first event. The waves remain large textured background bands rather than a useful part of navigation. Caveat everywhere needs a stronger size, weight and contrast hierarchy. Arrow icons resemble external links but expand details, and mandatory check-in instructions are hidden until expanded.</p><p>The 2021 page exposes times, categories and descriptions near the top. The 2026 page has tag and time-range filters, direct building-map links, visible event descriptions and attendee resources. Our search and saves do not replace those advantages. A step-change in usefulness would combine a much shorter schedule header with clear Now/Next, conflict-aware saved plans and direct directions. These are proposals, not implemented behavior or evidence of improved user outcomes.</p><p>Recommended order: compress the upper layout; improve typography hierarchy while retaining Caveat; make event actions explicit and expose critical instructions; add direct directions and useful saved-plan conflict information; then refine the ocean's role and artwork scale. No app code was changed for this assessment.</p><p><a href="https://2026.hackillinois.org/schedule">2026 reference</a> · <a href="https://2021.hackillinois.org/schedule">2021 reference</a></p><h2>Request and result</h2><p>Connected the approved design to the public HackIllinois API, added the exact 2021 navigation order, and completed practical schedule behavior. Replaced system handwriting with locally bundled Caveat at the user's request. The older HTML sketch remains intact as design history; use the React app for live events.</p><ul><li>Days and categories come from events. Events sort chronologically and display Chicago time.</li><li>Search, category selection and saved-only filtering work together; saves survive reload without an account.</li><li>Details display locations, safe description links, available venue maps, menus/points and calendar download.</li><li>Loading, retry, no published events, no matching events and failed storage have explicit states. Failed refresh retains the last loaded events.</li><li>Mobile navigation, keyboard focus styling, skip link, reduced-motion CSS and ocean pause are included.</li></ul><h2>API route</h2><p>The direct browser request failed, and a header check returned HTTP 200 without Access-Control-Allow-Origin. The browser now requests /api/events from its own site. Vite forwards this locally; vercel.json defines the matching deployment rewrite. No secrets, authentication or event mutations are involved. Other hosts must provide the equivalent route; copying dist alone will not work.</p><h2>Files changed</h2><table><tr><th>File</th><th>Change</th></tr><tr><td><code>.gitignore</code></td><td>Exclude dependencies, builds, local worktrees and environment files.</td></tr><tr><td><code>README.md</code></td><td>Run, test and deployment steps; API routing, architecture and limitations.</td></tr><tr><td><code>index.html</code></td><td>React entry document, title, description and mobile viewport.</td></tr><tr><td><code>package.json</code></td><td>React/Vite/Caveat dependencies and run, build, test and formatting scripts.</td></tr><tr><td><code>package-lock.json</code></td><td>Lock dependency versions for repeatable installs.</td></tr><tr><td><code>vite.config.js</code></td><td>Local same-site API forwarding and UI test setup.</td></tr><tr><td><code>vercel.json</code></td><td>Deployment route forwards /api/events to the public API without cache.</td></tr><tr><td><code>src/main.jsx</code></td><td>Mount React and load locally bundled Caveat and styles.</td></tr><tr><td><code>src/App.jsx</code></td><td>Compose schedule, data-derived dates/types, search, saved filter, live status, retry and refresh.</td></tr><tr><td><code>src/test-setup.js</code></td><td>DOM matchers and cleanup for UI tests.</td></tr><tr><td><code>src/navigation/Navigation.jsx</code></td><td>2021 Home/Mentors/Prizes/Schedule navigation with mobile menu.</td></tr><tr><td><code>src/navigation/logo.svg</code></td><td>Official logo extracted unchanged from the approved prototype.</td></tr><tr><td><code>src/ocean/Ocean.jsx</code></td><td>Eight independent wave layers positioned from the selected day.</td></tr><tr><td><code>src/ocean/ocean.css</code></td><td>Proportional wave rendering, bobbing and travel, pause and reduced-motion rules.</td></tr><tr><td><code>src/ocean/artwork/wave-layers.png</code></td><td>Existing approved artwork copied unchanged into app assets.</td></tr><tr><td><code>src/schedule/data/events.js</code></td><td>Validate public API response, omit private/staff rows, sort, normalize, format Chicago dates and handle request errors.</td></tr><tr><td><code>src/schedule/data/events.test.js</code></td><td>Ten data/HTTP boundary tests.</td></tr><tr><td><code>src/schedule/data/logger.js</code></td><td>Tagged debug/warning/error messages without full event payloads.</td></tr><tr><td><code>src/schedule/state/useSchedule.js</code></td><td>Abortable request with 15-second timeout, retry and last-success preservation; persistent saved events.</td></tr><tr><td><code>src/schedule/view/EventCard.jsx</code></td><td>Expandable safe event text, locations, venue map links, save buttons and calendar download.</td></tr><tr><td><code>src/schedule/view/paper.css</code></td><td>Approved paper fibers, folds, grid and cut edges preserved.</td></tr><tr><td><code>src/schedule/view/schedule.css</code></td><td>Responsive Caveat typography throughout, schedule layout, sketched controls and focus states.</td></tr><tr><td><code>src/schedule/testing/Schedule.ui.test.jsx</code></td><td>Seven integrated React flow tests.</td></tr><tr><td><code>src/schedule/export/calendar.js</code></td><td>UTC calendar text generation, escaping and UTF-8 line folding.</td></tr><tr><td><code>src/schedule/export/calendar.test.js</code></td><td>Two calendar-content tests.</td></tr><tr><td><code>planning/implementation/react-schedule-plan.html</code></td><td>Working-app scope, decisions, sources and completion state.</td></tr><tr><td><code>saved-results/ocean-schedule-research.md</code></td><td>Record final implementation and observed API limitation.</td></tr><tr><td><code>saved-results/ocean-schedule-review.html</code></td><td>This complete human handoff.</td></tr></table><h2>Focused source</h2><pre>vercel.json
 {

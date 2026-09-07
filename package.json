@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --test src/schedule/data/*.test.js src/schedule/export/*.test.js",
+    "test": "node --test src/schedule/data/*.test.js src/schedule/google/*.test.js",
     "test:ui": "vitest run",
     "format:check": "prettier --check src vite.config.js vercel.json package.json index.html README.md"
   },

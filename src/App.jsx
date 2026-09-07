@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import GoogleExport from "./schedule/google/GoogleExport.jsx";
+import "./schedule/plan-view/plan.css";
 import Navigation from "./navigation/Navigation.jsx";
+import EventRoute from "./schedule/route/EventRoute.jsx";
 import Ocean from "./ocean/Ocean.jsx";
 import {
   dayKey,
@@ -9,26 +12,14 @@ import {
 } from "./schedule/data/events.js";
 import { useSavedEvents, useSchedule } from "./schedule/state/useSchedule.js";
 import EventCard from "./schedule/view/EventCard.jsx";
-function Boat() {
-  return (
-    <svg className="route-boat" viewBox="0 0 40 45" aria-hidden="true">
-      <path
-        d="M20 3 7 28h11zm4 0v25h12zM5 32l7 8h19l6-8zM22 1v31M5 44q7-5 14 0t16 0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-      <path d="m5 32 7 8h19l6-8z" fill="#cba577" opacity=".7" />
-    </svg>
-  );
-}
 export default function App() {
   const { events, loading, error, refresh, updatedAt } = useSchedule();
   const { saved, toggle, storageError } = useSavedEvents();
   const [selectedDay, setSelectedDay] = useState("");
   const [kind, setKind] = useState("all");
   const [query, setQuery] = useState("");
-  const [savedOnly, setSavedOnly] = useState(false);
+  const [mySchedule, setMySchedule] = useState(false);
+  const [routeProgress, setRouteProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -46,20 +37,22 @@ export default function App() {
     (a, b) => typeLabel(a).localeCompare(typeLabel(b)),
   );
   const needle = query.trim().toLowerCase();
-  const visible = events.filter(
-    (event) =>
-      dayKey(event.startTime) === day &&
-      (kind === "all" || event.eventType === kind) &&
-      (!savedOnly || saved.has(event.eventId)) &&
-      `${event.name} ${event.description} ${event.locations.map((item) => item.description).join(" ")}`
-        .toLowerCase()
-        .includes(needle),
-  );
+  const savedEvents = events.filter((event) => saved.has(event.eventId));
+  const visible = mySchedule
+    ? savedEvents
+    : events.filter(
+        (event) =>
+          dayKey(event.startTime) === day &&
+          (kind === "all" || event.eventType === kind) &&
+          `${event.name} ${event.description} ${event.locations.map((item) => item.description).join(" ")}`
+            .toLowerCase()
+            .includes(needle),
+      );
   const activeIndex = Math.max(0, days.indexOf(day));
   function clearFilters() {
     setKind("all");
     setQuery("");
-    setSavedOnly(false);
+    setMySchedule(false);
   }
   return (
     <>
@@ -69,7 +62,7 @@ export default function App() {
       <Navigation />
       <main className="page" id="schedule">
         <div className="title-row">
-          <h1>Schedule</h1>
+          <h1>{mySchedule ? "My schedule" : "Schedule"}</h1>
           <label className="pause">
             <input
               type="checkbox"
@@ -91,103 +84,94 @@ export default function App() {
                 ? ` — ${formatDay(days.at(-1), { month: "long", day: "numeric", year: "numeric" })}`
                 : ""}
             </p>
-            <div className="days-scroll">
-              <div
-                className="days"
-                role="group"
-                aria-label="Schedule day"
-                style={{
-                  "--day-count": days.length,
-                  "--boat-position": `${(100 * (activeIndex + 0.5)) / days.length}%`,
-                }}
-              >
-                <svg
-                  className="route"
-                  viewBox="0 0 800 48"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
+            <div className="schedule-controls">
+              <nav className="schedule-views" aria-label="Schedule view">
+                <button
+                  aria-pressed={!mySchedule}
+                  onClick={() => setMySchedule(false)}
                 >
-                  <path
-                    d="M12 25C180 34 150 13 320 24S570 18 788 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeDasharray="5 7"
-                  />
-                </svg>
-                <Boat />
-                {days.map((date) => (
-                  <label
-                    className={`day ${date === day ? "active" : ""}`}
-                    key={date}
-                  >
-                    <input
-                      type="radio"
-                      name="schedule-day"
-                      value={date}
-                      checked={date === day}
-                      onChange={() => setSelectedDay(date)}
-                    />
-                    <span className="day-name">
-                      {new Date(`${date}T12:00:00Z`).toLocaleDateString(
-                        "en-US",
-                        { weekday: "long", timeZone: "UTC" },
-                      )}
-                    </span>
-                    <span className="day-date">
-                      {new Date(`${date}T12:00:00Z`).toLocaleDateString(
-                        "en-US",
-                        { month: "short", day: "numeric", timeZone: "UTC" },
-                      )}
-                    </span>
-                  </label>
-                ))}
+                  All events
+                </button>
+                <button
+                  aria-pressed={mySchedule}
+                  onClick={() => setMySchedule(true)}
+                >
+                  My schedule
+                </button>
+              </nav>
+              <div className="plan-actions">
+                <GoogleExport
+                  key={mySchedule ? "saved" : "all"}
+                  events={mySchedule ? savedEvents : events}
+                />
               </div>
             </div>
-            <div className="toolbar">
-              <label className="select-wrap">
-                <select
-                  aria-label="Event type"
-                  value={kind}
-                  onChange={(event) => setKind(event.target.value)}
-                >
-                  <option value="all">All event types</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {typeLabel(category)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="saved-filter">
-                <input
-                  type="checkbox"
-                  checked={savedOnly}
-                  onChange={(event) => setSavedOnly(event.target.checked)}
-                />
-                Saved events
-              </label>
-            </div>
-            <div className="search-row">
-              <input
-                type="search"
-                aria-label="Search events"
-                placeholder="Find an event or place…"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              <span className="timezone">
-                Chicago time ·{" "}
-                {
-                  new Intl.DateTimeFormat("en-US", {
-                    timeZone: "America/Chicago",
-                    timeZoneName: "short",
-                  })
-                    .formatToParts(new Date(`${day}T12:00:00Z`))
-                    .find((part) => part.type === "timeZoneName")?.value
-                }
-              </span>
-            </div>
+            {!mySchedule && (
+              <>
+                <div className="days-scroll">
+                  <div
+                    className="days"
+                    role="group"
+                    aria-label="Schedule day"
+                    style={{
+                      "--day-count": days.length,
+                    }}
+                  >
+                    {days.map((date) => (
+                      <label
+                        className={`day ${date === day ? "active" : ""}`}
+                        key={date}
+                      >
+                        <input
+                          type="radio"
+                          name="schedule-day"
+                          value={date}
+                          checked={date === day}
+                          onChange={() => setSelectedDay(date)}
+                        />
+                        <span className="day-name">
+                          {new Date(`${date}T12:00:00Z`).toLocaleDateString(
+                            "en-US",
+                            { weekday: "long", timeZone: "UTC" },
+                          )}
+                        </span>
+                        <span className="day-date">
+                          {new Date(`${date}T12:00:00Z`).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric", timeZone: "UTC" },
+                          )}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="toolbar">
+                  <label className="select-wrap">
+                    <select
+                      aria-label="Event type"
+                      value={kind}
+                      onChange={(event) => setKind(event.target.value)}
+                    >
+                      <option value="all">All event types</option>
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {typeLabel(category)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <div className="search-row">
+                  <input
+                    type="search"
+                    aria-label="Search events"
+                    placeholder="Find an event or place…"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                </div>
+              </>
+            )}
           </>
         )}
         {storageError && (
@@ -221,26 +205,57 @@ export default function App() {
         {events.length > 0 && (
           <>
             <div className="day-heading">
-              <h2>{formatDay(day)}</h2>
+              <h2>{mySchedule ? "Your starred events" : formatDay(day)}</h2>
               <span aria-live="polite">
                 {visible.length} {visible.length === 1 ? "event" : "events"}
               </span>
             </div>
-            <section aria-label="Schedule events">
-              {visible.map((event) => (
-                <EventCard
-                  key={event.eventId}
-                  event={event}
-                  saved={saved.has(event.eventId)}
-                  onToggle={toggle}
-                  now={now}
-                />
+            <section className="event-list" aria-label="Schedule events">
+              <EventRoute
+                events={visible}
+                paused={paused}
+                onProgress={setRouteProgress}
+              />
+
+              {visible.map((event, index) => (
+                <React.Fragment key={event.eventId}>
+                  {mySchedule &&
+                    (index === 0 ||
+                      dayKey(event.startTime) !==
+                        dayKey(visible[index - 1].startTime)) && (
+                      <h3 className="plan-day">
+                        {formatDay(dayKey(event.startTime))}
+                      </h3>
+                    )}
+                  <EventCard
+                    event={event}
+                    saved={saved.has(event.eventId)}
+                    onToggle={toggle}
+                    now={now}
+                    conflicts={
+                      saved.has(event.eventId)
+                        ? savedEvents.filter(
+                            (other) =>
+                              other.eventId !== event.eventId &&
+                              other.startTime < event.endTime &&
+                              event.startTime < other.endTime,
+                          )
+                        : []
+                    }
+                  />
+                </React.Fragment>
               ))}
             </section>
             {!visible.length && (
               <div className="notice">
-                <p>No events match your filters.</p>
-                <button onClick={clearFilters}>Clear filters</button>
+                <p>
+                  {mySchedule
+                    ? "Star events to start building your schedule."
+                    : "No events match your filters."}
+                </p>
+                <button onClick={clearFilters}>
+                  {mySchedule ? "Browse events" : "Clear filters"}
+                </button>
               </div>
             )}
           </>
@@ -268,7 +283,12 @@ export default function App() {
           </p>
         </footer>
       </main>
-      <Ocean dayIndex={activeIndex} dayCount={days.length} paused={paused} />
+      <Ocean
+        dayIndex={activeIndex}
+        dayCount={days.length}
+        paused={paused}
+        progress={routeProgress}
+      />
     </>
   );
 }
