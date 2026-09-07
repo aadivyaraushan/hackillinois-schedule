@@ -570,7 +570,4038 @@ export default function EventRoute({ events, saved, paused, onProgress }) {
       events={mySchedule ? savedEvents : events} /&gt;
   &lt;/div&gt;
 &lt;/div&gt;</pre><h3>Limits and manual checks</h3><p>No new logging or failing test for timezone copy deletion: mechanical presentation-only removal; existing timezone tests retained. Mobile wrapping uses flex-wrap but was not visually rechecked in this pass. No deployment performed. OAuth consent uses existing Operator branding and testing audience. Fresh insertion and the in-app browser popup remain unverified; live Chrome duplicate export succeeded.</p><p>Open All events: export should precede Friday/Saturday/Sunday. Change day or filters: export still includes the weekend. Open My schedule: export includes favorites only. Check a narrow window: actions should wrap above the days, without horizontal overflow.</p></section><section><h2>September 7 — requested comparison with prior schedules</h2><p><strong>My judgment: a substantial improvement for personal planning, but I cannot honestly call it 10× better overall.</strong> No attendee task-time study has been run. This is a design judgment based on fresh browser inspection, not a measured multiplier.</p><p>Compared live <a href="https://2021.hackillinois.org/schedule">2021</a>, <a href="https://2026.hackillinois.org/schedule">2026</a>, and localhost:5173. Read their rendered controls and event content; inspected screenshots of both official pages. Viewports differed, so this is not a quantitative density comparison.</p><h3>Where this version wins</h3><p>The current page combines search, favorites across days, named overlap warnings and Google export. These are a useful planning workflow, not just decoration. Neither inspected official schedule exposed an equivalent saved-plan/export workflow in its visible controls. That observation does not establish what their separate mobile apps provide. The paper, handwriting and boat are a distinctive and cohesive direction in my judgment.</p><h3>What still limits the claim</h3><ol><li><strong>Speed of scanning is unproven.</strong> Caveat throughout and generous row spacing give personality, but I suspect they make quick time/location comparison slower than necessary. This is a hypothesis to test, not grounds for throwing away the design.</li><li><strong>Overlap warnings can overstate a problem.</strong> The current page marks Attendee Check-In (2–5) against Company Expo (3–5). Both might be drop-in windows; the code compares whole time ranges and does not know attendance requirements. They overlap mathematically, but that does not prove the attendee cannot do both. Repeated warnings can add noise.</li><li><strong>Public readiness still matters.</strong> Google setup currently uses Operator branding and a testing audience; the verified export was a local 10-existing-events result. This is not evidence that arbitrary attendees can connect on a deployed site. Navigation still points to the 2021 archive.</li><li><strong>The boat helps orientation, not yet decision-making.</strong> It tracks position in the list; it is not a proportional time chart showing duration or free time. It should not be sold as that.</li></ol><p>The 2026 page already has venue map links, tag filters, and a from/to time filter; those basic capabilities are not unique advantages here. Its event cards show points too. The 2021 page clearly separates times and titles. Prior versions have strengths worth retaining.</p><h3>Recommendation</h3><p>Keep the current direction. Before adding more features, test three concrete tasks with a few attendees: locate a workshop and its room; build a three-event plan with an overlap; export that plan. Record completion time and mistakes against the official schedule where the same task is possible. Separately finish public OAuth/deployment readiness. This gives evidence of improvement without an endless feature checklist.</p><p>No source code changed, no new tests/build required for this read-only comparison. This section is the requested human review handoff.</p></section><section><h2>September 7 — exact conflict intervals, interview scope</h2><p><strong>Complete:</strong> conflict notices now show only the shared interval, not the other event’s entire duration. Interview-demo scope acknowledged: public OAuth branding and archive navigation are not blockers for the requested demo.</p><p>Live browser evidence: Startup Workshop / Late Night Snack now reads “Conflict with Late Night Snack from 11:00 PM to 11:30 PM · Feb 27.” An overnight overlap reads “Conflict with Quiet Workspace from 11:00 PM to 12:00 AM · Feb 27–Feb 28.”</p><h3>Files and exact change</h3><ul><li>src/schedule/view/EventCard.jsx: derive overlap start/end, format that interval and its date(s).</li><li>src/schedule/testing/Schedule.ui.test.jsx: existing filtered-out saved-event integration test now checks 5:01 PM–6:00 PM, instead of the other event’s 5:01 PM–7:00 PM duration.</li><li>planning/implementation/react-schedule-plan.html: added bounded interval refinement plan.</li><li>saved-results/ocean-schedule-review.html: updated this report.</li></ul><pre>const overlapStart = Math.max(event.startTime, other.startTime);
-const overlapEnd = Math.min(event.endTime, other.endTime);</pre><h3>Checks</h3><p>RED: npm run test:ui -- --run src/schedule/testing/Schedule.ui.test.jsx — 14 passed, 1 failed on old conflict notice. GREEN: npm run test:ui — 18 passed, 0 failed. npm run build — PASS, 39 modules. git diff --check — PASS. Prettier formatted both changed source files. Computer Use confirmed real daytime and overnight intervals.</p><p>Sibling search: conflict rendering appears only in EventCard; both All events and My schedule reuse it. Existing overlap detection in App remains unchanged. No API changes, schema changes or new logging: this is a small derived-text calculation. No separate unit test added; integration checks exercise the saved/filter/card flow. Fresh mobile screenshot skipped because no layout/styles changed.</p><p>Manual check: star two partially overlapping events, then check both cards and My schedule; the same shared interval should appear in both notices. This remains a time overlap warning, not a judgment that attendance at both is impossible.</p></section><h1>Working HackIllinois schedule</h1><p>September 7, 2026 · branch schedule-app</p><div class="result"><strong>Latest refinements complete:</strong> drawn downward expand arrows, stronger event highlighting, Google Maps actions beside each venue, and bolder names/start times with quieter secondary text. <a href="http://127.0.0.1:5173/">Open app</a> · <a href="../planning/implementation/planning-ideas.html">Planning and ocean concepts</a>. Concepts are proposals only; no deployment was made.</div><h2>Event interaction refinements — September 7, 2026</h2><p>User requested three concrete UI changes plus ideation. Changed src/schedule/view/EventCard.jsx: replaced diagonal disclosure character with a hand-drawn SVG arrow, and added separate Google Maps links for each venue outside the expandable details. Links prefer valid coordinates; missing/invalid coordinates fall back to the location name. Missing locations show text without a fabricated link.</p><p>Changed src/schedule/view/schedule.css: arrow rotates 180° when expanded, hover and keyboard focus use the same stronger green paper tint and left rule; titles and start times use weight 700; categories use reduced opacity and secondary labels quieter color. Caveat is retained throughout. Desktop and narrow overrides updated. Changed src/schedule/testing/Schedule.ui.test.jsx: two new integration tests cover multi-venue destinations, name fallback and absent locations. Updated planning/implementation/react-schedule-plan.html, saved-results/ocean-schedule-research.md and this report. Added planning/implementation/planning-ideas.html with illustrated proposals.</p><pre>https://www.google.com/maps/search/?api=1&amp;query=40.113812%2C-88.224937
+const overlapEnd = Math.min(event.endTime, other.endTime);</pre><h3>Checks</h3><p>RED: npm run test:ui -- --run src/schedule/testing/Schedule.ui.test.jsx — 14 passed, 1 failed on old conflict notice. GREEN: npm run test:ui — 18 passed, 0 failed. npm run build — PASS, 39 modules. git diff --check — PASS. Prettier formatted both changed source files. Computer Use confirmed real daytime and overnight intervals.</p><p>Sibling search: conflict rendering appears only in EventCard; both All events and My schedule reuse it. Existing overlap detection in App remains unchanged. No API changes, schema changes or new logging: this is a small derived-text calculation. No separate unit test added; integration checks exercise the saved/filter/card flow. Fresh mobile screenshot skipped because no layout/styles changed.</p><p>Manual check: star two partially overlapping events, then check both cards and My schedule; the same shared interval should appear in both notices. This remains a time overlap warning, not a judgment that attendance at both is impossible.</p></section><section><h2>Vercel release, reviewable files, transparent mobile menu</h2><p><strong>Live:</strong> <a href="https://hackillinois-schedule-five.vercel.app/">HackIllinois Schedule</a>. Published app commit c1a37e6 on GitHub branch schedule-app. Human code review remains yours; this handoff does not mark your review complete.</p><p>All 45 JavaScript, JSX and CSS source files are at most 135 lines. App is 115; EventCard is 92. Extracted components, data formatting/validation, styles and flow tests without changing intended behavior. Mobile menu background changed from #071725 to transparent.</p><h3>Read these files in order</h3><table><tr><th>File</th><th>Lines</th><th>Purpose</th></tr><tr><td><a href="../src/App.jsx">src/App.jsx</a></td><td>115</td><td>Page state and composition</td></tr><tr><td><a href="../src/schedule/state/useSchedule.js">src/schedule/state/useSchedule.js</a></td><td>75</td><td>API loading, refresh and saved choices</td></tr><tr><td><a href="../src/schedule/data/events.js">src/schedule/data/events.js</a></td><td>67</td><td>HTTP request and failures</td></tr><tr><td><a href="../src/schedule/data/validation/normalize.js">src/schedule/data/validation/normalize.js</a></td><td>111</td><td>Validation of public API events</td></tr><tr><td><a href="../src/schedule/controls/ScheduleControls.jsx">src/schedule/controls/ScheduleControls.jsx</a></td><td>73</td><td>Views and whole-schedule export</td></tr><tr><td><a href="../src/schedule/controls/DayFilters.jsx">src/schedule/controls/DayFilters.jsx</a></td><td>77</td><td>Day, category and search controls</td></tr><tr><td><a href="../src/schedule/plan-view/EventList.jsx">src/schedule/plan-view/EventList.jsx</a></td><td>80</td><td>Grouping and conflict detection</td></tr><tr><td><a href="../src/schedule/view/EventCard.jsx">src/schedule/view/EventCard.jsx</a></td><td>92</td><td>Event details and exact conflict intervals</td></tr><tr><td><a href="../src/schedule/route/EventRoute.jsx">src/schedule/route/EventRoute.jsx</a></td><td>135</td><td>Boat position and scrolling</td></tr><tr><td><a href="../src/schedule/google/GoogleExport.jsx">src/schedule/google/GoogleExport.jsx</a></td><td>121</td><td>Google permission and export feedback</td></tr><tr><td><a href="../src/schedule/google/calendar.js">src/schedule/google/calendar.js</a></td><td>63</td><td>Calendar requests and duplicate handling</td></tr><tr><td><a href="../src/ocean/Ocean.jsx">src/ocean/Ocean.jsx</a></td><td>58</td><td>Animated ocean layers</td></tr></table><h3>Configuration and effects</h3><p>Free Hobby team aadivyaraushans-projects; Vite production deployment with existing /api/events rewrite. VITE_GOOGLE_CLIENT_ID configured in production environment; no client secret. Added public origin to existing Operator Google client and verified it persisted. Local origins preserved. .vercel ignored. GitHub branch remains schedule-app; deployment is via CLI, automatic Git deployment not configured. No paid upgrade or custom domain purchase.</p><h3>Checks</h3><p>Baseline and post-extraction npm test: 12 passed. npm run test:ui: 18 passed (now 7 files). npm run build: PASS, 48 modules. npm run format:check and git diff --check: PASS. Source count: 45 JS/JSX/CSS files, maximum 135 lines. No artificial failing test for pure extraction or one-property styling: existing behavioral tests run before and after.</p><p>First public deployment: HTTP 200; public /api/events returned 41 events. Computer Use verified live events, starring, My schedule and empty plan; test favorite removed. Hosted Google client enabled and origin saved, but a hosted calendar write is not verified. Google testing audience/Operator branding remain as accepted for interview scope.</p><h3>Changed-file inventory</h3><pre>M	.gitignore
+M	planning/implementation/vercel-deploy-plan.html
+M	saved-results/google-calendar-setup.md
+M	src/App.jsx
+A	src/schedule/controls/DayFilters.jsx
+A	src/schedule/controls/ScheduleControls.jsx
+R100	src/schedule/data/logger.js	src/schedule/data/diagnostics/logger.js
+M	src/schedule/data/events.js
+M	src/schedule/data/events.test.js
+A	src/schedule/data/formatting/format.js
+A	src/schedule/data/request.test.js
+A	src/schedule/data/validation/normalize.js
+M	src/schedule/google/GoogleExport.jsx
+M	src/schedule/google/calendar.js
+A	src/schedule/plan-view/EventList.jsx
+M	src/schedule/route/EventRoute.jsx
+M	src/schedule/state/useSchedule.js
+A	src/schedule/status/ScheduleFooter.jsx
+A	src/schedule/status/ScheduleNotices.jsx
+D	src/schedule/testing/Schedule.ui.test.jsx
+A	src/schedule/testing/browsing/browsing.ui.test.jsx
+A	src/schedule/testing/browsing/details.ui.test.jsx
+A	src/schedule/testing/browsing/loading.ui.test.jsx
+A	src/schedule/testing/fixtures/schedule.js
+A	src/schedule/testing/planning/export.ui.test.jsx
+A	src/schedule/testing/planning/planning.ui.test.jsx
+A	src/schedule/testing/planning/route.ui.test.jsx
+M	src/schedule/view/EventCard.jsx
+A	src/schedule/view/details/EventDescription.jsx
+A	src/schedule/view/details/EventLocations.jsx
+M	src/schedule/view/schedule.css
+A	src/schedule/view/styles/controls.css
+A	src/schedule/view/styles/details.css
+A	src/schedule/view/styles/event-row.css
+A	src/schedule/view/styles/foundation/base.css
+A	src/schedule/view/styles/foundation/header.css
+A	src/schedule/view/styles/responsive/accessibility.css
+A	src/schedule/view/styles/responsive/mobile.css
+A	src/schedule/view/styles/responsive/tablet.css
+</pre><p>Also updated this review handoff, deployment plan and Google setup record. Style extraction preserves cascade order. Logger imports updated across callers; tests split by browsing/planning flow. No other mobile menu background declaration found.</p><details><summary>Exact source diff for review</summary><pre>diff --git a/.gitignore b/.gitignore
+index 14cb86f..de6e9c3 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,3 +4,4 @@ dist/
+ .env*
+ !.env.example
+ .DS_Store
++.vercel
+diff --git a/src/App.jsx b/src/App.jsx
+index 40b0745..a1801c8 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -1,17 +1,13 @@
++import ScheduleControls from &quot;./schedule/controls/ScheduleControls.jsx&quot;;
++import ScheduleNotices from &quot;./schedule/status/ScheduleNotices.jsx&quot;;
++import ScheduleFooter from &quot;./schedule/status/ScheduleFooter.jsx&quot;;
++import EventList from &quot;./schedule/plan-view/EventList.jsx&quot;;
+ import React, { useEffect, useState } from &quot;react&quot;;
+-import GoogleExport from &quot;./schedule/google/GoogleExport.jsx&quot;;
+ import &quot;./schedule/plan-view/plan.css&quot;;
+ import Navigation from &quot;./navigation/Navigation.jsx&quot;;
+-import EventRoute from &quot;./schedule/route/EventRoute.jsx&quot;;
+ import Ocean from &quot;./ocean/Ocean.jsx&quot;;
+-import {
+-  dayKey,
+-  getDays,
+-  formatDay,
+-  typeLabel,
+-} from &quot;./schedule/data/events.js&quot;;
++import { dayKey, getDays, typeLabel } from &quot;./schedule/data/events.js&quot;;
+ import { useSavedEvents, useSchedule } from &quot;./schedule/state/useSchedule.js&quot;;
+-import EventCard from &quot;./schedule/view/EventCard.jsx&quot;;
+ export default function App() {
+   const { events, loading, error, refresh, updatedAt } = useSchedule();
+   const { saved, toggle, storageError } = useSavedEvents();
+@@ -72,216 +68,41 @@ export default function App() {
+             Pause ocean
+           &lt;/label&gt;
+         &lt;/div&gt;
+-        {days.length &gt; 0 &amp;&amp; (
+-          &lt;&gt;
+-            &lt;p className=&quot;edition&quot;&gt;
+-              {formatDay(days[0], {
+-                month: &quot;long&quot;,
+-                day: &quot;numeric&quot;,
+-                year: &quot;numeric&quot;,
+-              })}
+-              {days.length &gt; 1
+-                ? ` — ${formatDay(days.at(-1), { month: &quot;long&quot;, day: &quot;numeric&quot;, year: &quot;numeric&quot; })}`
+-                : &quot;&quot;}
+-            &lt;/p&gt;
+-            &lt;div className=&quot;schedule-controls&quot;&gt;
+-              &lt;nav className=&quot;schedule-views&quot; aria-label=&quot;Schedule view&quot;&gt;
+-                &lt;button
+-                  aria-pressed={!mySchedule}
+-                  onClick={() =&gt; setMySchedule(false)}
+-                &gt;
+-                  All events
+-                &lt;/button&gt;
+-                &lt;button
+-                  aria-pressed={mySchedule}
+-                  onClick={() =&gt; setMySchedule(true)}
+-                &gt;
+-                  My schedule
+-                &lt;/button&gt;
+-              &lt;/nav&gt;
+-              &lt;div className=&quot;plan-actions&quot;&gt;
+-                &lt;GoogleExport
+-                  key={mySchedule ? &quot;saved&quot; : &quot;all&quot;}
+-                  events={mySchedule ? savedEvents : events}
+-                /&gt;
+-              &lt;/div&gt;
+-            &lt;/div&gt;
+-            {!mySchedule &amp;&amp; (
+-              &lt;&gt;
+-                &lt;div className=&quot;days-scroll&quot;&gt;
+-                  &lt;div
+-                    className=&quot;days&quot;
+-                    role=&quot;group&quot;
+-                    aria-label=&quot;Schedule day&quot;
+-                    style={{
+-                      &quot;--day-count&quot;: days.length,
+-                    }}
+-                  &gt;
+-                    {days.map((date) =&gt; (
+-                      &lt;label
+-                        className={`day ${date === day ? &quot;active&quot; : &quot;&quot;}`}
+-                        key={date}
+-                      &gt;
+-                        &lt;input
+-                          type=&quot;radio&quot;
+-                          name=&quot;schedule-day&quot;
+-                          value={date}
+-                          checked={date === day}
+-                          onChange={() =&gt; setSelectedDay(date)}
+-                        /&gt;
+-                        &lt;span className=&quot;day-name&quot;&gt;
+-                          {new Date(`${date}T12:00:00Z`).toLocaleDateString(
+-                            &quot;en-US&quot;,
+-                            { weekday: &quot;long&quot;, timeZone: &quot;UTC&quot; },
+-                          )}
+-                        &lt;/span&gt;
+-                        &lt;span className=&quot;day-date&quot;&gt;
+-                          {new Date(`${date}T12:00:00Z`).toLocaleDateString(
+-                            &quot;en-US&quot;,
+-                            { month: &quot;short&quot;, day: &quot;numeric&quot;, timeZone: &quot;UTC&quot; },
+-                          )}
+-                        &lt;/span&gt;
+-                      &lt;/label&gt;
+-                    ))}
+-                  &lt;/div&gt;
+-                &lt;/div&gt;
+-                &lt;div className=&quot;toolbar&quot;&gt;
+-                  &lt;label className=&quot;select-wrap&quot;&gt;
+-                    &lt;select
+-                      aria-label=&quot;Event type&quot;
+-                      value={kind}
+-                      onChange={(event) =&gt; setKind(event.target.value)}
+-                    &gt;
+-                      &lt;option value=&quot;all&quot;&gt;All event types&lt;/option&gt;
+-                      {categories.map((category) =&gt; (
+-                        &lt;option key={category} value={category}&gt;
+-                          {typeLabel(category)}
+-                        &lt;/option&gt;
+-                      ))}
+-                    &lt;/select&gt;
+-                  &lt;/label&gt;
+-                &lt;/div&gt;
+-                &lt;div className=&quot;search-row&quot;&gt;
+-                  &lt;input
+-                    type=&quot;search&quot;
+-                    aria-label=&quot;Search events&quot;
+-                    placeholder=&quot;Find an event or place…&quot;
+-                    value={query}
+-                    onChange={(event) =&gt; setQuery(event.target.value)}
+-                  /&gt;
+-                &lt;/div&gt;
+-              &lt;/&gt;
+-            )}
+-          &lt;/&gt;
+-        )}
+-        {storageError &amp;&amp; (
+-          &lt;p role=&quot;status&quot; className=&quot;notice&quot;&gt;
+-            Your browser could not save your selections. They will last until
+-            you leave this page.
+-          &lt;/p&gt;
+-        )}
+-        {loading &amp;&amp; (
+-          &lt;p role=&quot;status&quot; className=&quot;notice&quot;&gt;
+-            {events.length
+-              ? &quot;Refreshing the schedule…&quot;
+-              : &quot;Loading the schedule…&quot;}
+-          &lt;/p&gt;
+-        )}
+-        {error &amp;&amp; (
+-          &lt;div role=&quot;alert&quot; className=&quot;notice error&quot;&gt;
+-            &lt;p&gt;{error}&lt;/p&gt;
+-            {events.length &gt; 0 &amp;&amp; (
+-              &lt;p&gt;Previously loaded events are still shown below.&lt;/p&gt;
+-            )}
+-            &lt;button onClick={refresh}&gt;Try again&lt;/button&gt;
+-          &lt;/div&gt;
+-        )}
+-        {!loading &amp;&amp; !error &amp;&amp; !events.length &amp;&amp; (
+-          &lt;div className=&quot;notice&quot;&gt;
+-            &lt;p&gt;No events have been published yet.&lt;/p&gt;
+-            &lt;button onClick={refresh}&gt;Refresh schedule&lt;/button&gt;
+-          &lt;/div&gt;
+-        )}
+-        {events.length &gt; 0 &amp;&amp; (
+-          &lt;&gt;
+-            &lt;div className=&quot;day-heading&quot;&gt;
+-              &lt;h2&gt;{mySchedule ? &quot;Your starred events&quot; : formatDay(day)}&lt;/h2&gt;
+-              &lt;span aria-live=&quot;polite&quot;&gt;
+-                {visible.length} {visible.length === 1 ? &quot;event&quot; : &quot;events&quot;}
+-              &lt;/span&gt;
+-            &lt;/div&gt;
+-            &lt;section className=&quot;event-list&quot; aria-label=&quot;Schedule events&quot;&gt;
+-              &lt;EventRoute
+-                events={visible}
+-                paused={paused}
+-                onProgress={setRouteProgress}
+-              /&gt;
+-
+-              {visible.map((event, index) =&gt; (
+-                &lt;React.Fragment key={event.eventId}&gt;
+-                  {mySchedule &amp;&amp;
+-                    (index === 0 ||
+-                      dayKey(event.startTime) !==
+-                        dayKey(visible[index - 1].startTime)) &amp;&amp; (
+-                      &lt;h3 className=&quot;plan-day&quot;&gt;
+-                        {formatDay(dayKey(event.startTime))}
+-                      &lt;/h3&gt;
+-                    )}
+-                  &lt;EventCard
+-                    event={event}
+-                    saved={saved.has(event.eventId)}
+-                    onToggle={toggle}
+-                    now={now}
+-                    conflicts={
+-                      saved.has(event.eventId)
+-                        ? savedEvents.filter(
+-                            (other) =&gt;
+-                              other.eventId !== event.eventId &amp;&amp;
+-                              other.startTime &lt; event.endTime &amp;&amp;
+-                              event.startTime &lt; other.endTime,
+-                          )
+-                        : []
+-                    }
+-                  /&gt;
+-                &lt;/React.Fragment&gt;
+-              ))}
+-            &lt;/section&gt;
+-            {!visible.length &amp;&amp; (
+-              &lt;div className=&quot;notice&quot;&gt;
+-                &lt;p&gt;
+-                  {mySchedule
+-                    ? &quot;Star events to start building your schedule.&quot;
+-                    : &quot;No events match your filters.&quot;}
+-                &lt;/p&gt;
+-                &lt;button onClick={clearFilters}&gt;
+-                  {mySchedule ? &quot;Browse events&quot; : &quot;Clear filters&quot;}
+-                &lt;/button&gt;
+-              &lt;/div&gt;
+-            )}
+-          &lt;/&gt;
+-        )}
+-        &lt;footer className=&quot;schedule-footer&quot;&gt;
+-          &lt;p&gt;
+-            Events from &lt;a href=&quot;https://hackillinois.org/&quot;&gt;HackIllinois&lt;/a&gt;.
+-            Saved events stay on this browser.
+-          &lt;/p&gt;
+-          {updatedAt &amp;&amp; (
+-            &lt;p&gt;
+-              Last checked{&quot; &quot;}
+-              {updatedAt.toLocaleTimeString(&quot;en-US&quot;, {
+-                hour: &quot;numeric&quot;,
+-                minute: &quot;2-digit&quot;,
+-              })}
+-              .{&quot; &quot;}
+-              &lt;button onClick={refresh} disabled={loading}&gt;
+-                Refresh
+-              &lt;/button&gt;
+-            &lt;/p&gt;
+-          )}
+-          &lt;p className=&quot;archive-note&quot;&gt;
+-            Home, Mentors and Prizes link to the 2021 site.
+-          &lt;/p&gt;
+-        &lt;/footer&gt;
++        &lt;ScheduleControls
++          {...{
++            days,
++            day,
++            setSelectedDay,
++            mySchedule,
++            setMySchedule,
++            events,
++            savedEvents,
++            categories,
++            kind,
++            setKind,
++            query,
++            setQuery,
++          }}
++        /&gt;
++        &lt;ScheduleNotices
++          {...{ storageError, loading, events, error, refresh }}
++        /&gt;
++        &lt;EventList
++          {...{
++            events,
++            visible,
++            savedEvents,
++            saved,
++            toggle,
++            now,
++            mySchedule,
++            day,
++            paused,
++            setRouteProgress,
++            clearFilters,
++          }}
++        /&gt;
++        &lt;ScheduleFooter {...{ updatedAt, refresh, loading }} /&gt;
+       &lt;/main&gt;
+       &lt;Ocean
+         dayIndex={activeIndex}
+diff --git a/src/schedule/controls/DayFilters.jsx b/src/schedule/controls/DayFilters.jsx
+new file mode 100644
+index 0000000..d269120
+--- /dev/null
++++ b/src/schedule/controls/DayFilters.jsx
+@@ -0,0 +1,77 @@
++import React from &quot;react&quot;;
++import { typeLabel } from &quot;../data/events.js&quot;;
++export default function DayFilters({
++  days,
++  day,
++  setSelectedDay,
++  categories,
++  kind,
++  setKind,
++  query,
++  setQuery,
++}) {
++  return (
++    &lt;&gt;
++      &lt;div className=&quot;days-scroll&quot;&gt;
++        &lt;div
++          className=&quot;days&quot;
++          role=&quot;group&quot;
++          aria-label=&quot;Schedule day&quot;
++          style={{
++            &quot;--day-count&quot;: days.length,
++          }}
++        &gt;
++          {days.map((date) =&gt; (
++            &lt;label className={`day ${date === day ? &quot;active&quot; : &quot;&quot;}`} key={date}&gt;
++              &lt;input
++                type=&quot;radio&quot;
++                name=&quot;schedule-day&quot;
++                value={date}
++                checked={date === day}
++                onChange={() =&gt; setSelectedDay(date)}
++              /&gt;
++              &lt;span className=&quot;day-name&quot;&gt;
++                {new Date(`${date}T12:00:00Z`).toLocaleDateString(&quot;en-US&quot;, {
++                  weekday: &quot;long&quot;,
++                  timeZone: &quot;UTC&quot;,
++                })}
++              &lt;/span&gt;
++              &lt;span className=&quot;day-date&quot;&gt;
++                {new Date(`${date}T12:00:00Z`).toLocaleDateString(&quot;en-US&quot;, {
++                  month: &quot;short&quot;,
++                  day: &quot;numeric&quot;,
++                  timeZone: &quot;UTC&quot;,
++                })}
++              &lt;/span&gt;
++            &lt;/label&gt;
++          ))}
++        &lt;/div&gt;
++      &lt;/div&gt;
++      &lt;div className=&quot;toolbar&quot;&gt;
++        &lt;label className=&quot;select-wrap&quot;&gt;
++          &lt;select
++            aria-label=&quot;Event type&quot;
++            value={kind}
++            onChange={(event) =&gt; setKind(event.target.value)}
++          &gt;
++            &lt;option value=&quot;all&quot;&gt;All event types&lt;/option&gt;
++            {categories.map((category) =&gt; (
++              &lt;option key={category} value={category}&gt;
++                {typeLabel(category)}
++              &lt;/option&gt;
++            ))}
++          &lt;/select&gt;
++        &lt;/label&gt;
++      &lt;/div&gt;
++      &lt;div className=&quot;search-row&quot;&gt;
++        &lt;input
++          type=&quot;search&quot;
++          aria-label=&quot;Search events&quot;
++          placeholder=&quot;Find an event or place…&quot;
++          value={query}
++          onChange={(event) =&gt; setQuery(event.target.value)}
++        /&gt;
++      &lt;/div&gt;
++    &lt;/&gt;
++  );
++}
+diff --git a/src/schedule/controls/ScheduleControls.jsx b/src/schedule/controls/ScheduleControls.jsx
+new file mode 100644
+index 0000000..22d41fe
+--- /dev/null
++++ b/src/schedule/controls/ScheduleControls.jsx
+@@ -0,0 +1,73 @@
++import React from &quot;react&quot;;
++import GoogleExport from &quot;../google/GoogleExport.jsx&quot;;
++import { formatDay } from &quot;../data/events.js&quot;;
++import DayFilters from &quot;./DayFilters.jsx&quot;;
++export default function ScheduleControls({
++  days,
++  day,
++  setSelectedDay,
++  mySchedule,
++  setMySchedule,
++  events,
++  savedEvents,
++  categories,
++  kind,
++  setKind,
++  query,
++  setQuery,
++}) {
++  return (
++    &lt;&gt;
++      {days.length &gt; 0 &amp;&amp; (
++        &lt;&gt;
++          &lt;p className=&quot;edition&quot;&gt;
++            {formatDay(days[0], {
++              month: &quot;long&quot;,
++              day: &quot;numeric&quot;,
++              year: &quot;numeric&quot;,
++            })}
++            {days.length &gt; 1
++              ? ` — ${formatDay(days.at(-1), { month: &quot;long&quot;, day: &quot;numeric&quot;, year: &quot;numeric&quot; })}`
++              : &quot;&quot;}
++          &lt;/p&gt;
++          &lt;div className=&quot;schedule-controls&quot;&gt;
++            &lt;nav className=&quot;schedule-views&quot; aria-label=&quot;Schedule view&quot;&gt;
++              &lt;button
++                aria-pressed={!mySchedule}
++                onClick={() =&gt; setMySchedule(false)}
++              &gt;
++                All events
++              &lt;/button&gt;
++              &lt;button
++                aria-pressed={mySchedule}
++                onClick={() =&gt; setMySchedule(true)}
++              &gt;
++                My schedule
++              &lt;/button&gt;
++            &lt;/nav&gt;
++            &lt;div className=&quot;plan-actions&quot;&gt;
++              &lt;GoogleExport
++                key={mySchedule ? &quot;saved&quot; : &quot;all&quot;}
++                events={mySchedule ? savedEvents : events}
++              /&gt;
++            &lt;/div&gt;
++          &lt;/div&gt;
++          {!mySchedule &amp;&amp; (
++            &lt;DayFilters
++              {...{
++                days,
++                day,
++                setSelectedDay,
++                categories,
++                kind,
++                setKind,
++                query,
++                setQuery,
++              }}
++            /&gt;
++          )}
++        &lt;/&gt;
++      )}
++    &lt;/&gt;
++  );
++}
+diff --git a/src/schedule/data/logger.js b/src/schedule/data/diagnostics/logger.js
+similarity index 100%
+rename from src/schedule/data/logger.js
+rename to src/schedule/data/diagnostics/logger.js
+diff --git a/src/schedule/data/events.js b/src/schedule/data/events.js
+index beaf37c..b3e7057 100644
+--- a/src/schedule/data/events.js
++++ b/src/schedule/data/events.js
+@@ -1,195 +1,16 @@
+-import { logger } from &quot;./logger.js&quot;;
+-
++import { logger } from &quot;./diagnostics/logger.js&quot;;
++import { normalizeEvents } from &quot;./validation/normalize.js&quot;;
++export { normalizeEvents } from &quot;./validation/normalize.js&quot;;
++export {
++  TIME_ZONE,
++  dayKey,
++  getDays,
++  formatDay,
++  formatTime,
++  typeLabel,
++} from &quot;./formatting/format.js&quot;;
+ // Same-site route avoids the upstream API’s missing cross-origin headers.
+ export const API_URL = &quot;/api/events&quot;;
+-export const TIME_ZONE = &quot;America/Chicago&quot;;
+-
+-const DATE_PARTS = new Intl.DateTimeFormat(&quot;en-US&quot;, {
+-  timeZone: TIME_ZONE,
+-  year: &quot;numeric&quot;,
+-  month: &quot;2-digit&quot;,
+-  day: &quot;2-digit&quot;,
+-});
+-
+-const TIME_FORMATTER = new Intl.DateTimeFormat(&quot;en-US&quot;, {
+-  timeZone: TIME_ZONE,
+-  hour: &quot;numeric&quot;,
+-  minute: &quot;2-digit&quot;,
+-  hour12: true,
+-});
+-
+-const TYPE_LABELS = {
+-  CEREMONY: &quot;Ceremony&quot;,
+-  MEAL: &quot;Meal&quot;,
+-  MEETING: &quot;Meeting&quot;,
+-  MINIEVENT: &quot;Mini Event&quot;,
+-  OTHER: &quot;Other&quot;,
+-  QNA: &quot;Q&amp;A&quot;,
+-  SIDEQUEST: &quot;Side Quest&quot;,
+-  SOCIAL: &quot;Social&quot;,
+-  SPEAKER: &quot;Speaker Event&quot;,
+-  STAFFSHIFT: &quot;Staff Shift&quot;,
+-  WORKSHOP: &quot;Workshop&quot;,
+-};
+-
+-const MAX_DATE_SECONDS = 8_640_000_000_000;
+-
+-function nonEmptyString(value) {
+-  return typeof value === &quot;string&quot; &amp;&amp; value.trim() ? value.trim() : null;
+-}
+-
+-function safeString(value) {
+-  return typeof value === &quot;string&quot; ? value : &quot;&quot;;
+-}
+-
+-function safeNumber(value, fallback = 0) {
+-  return Number.isFinite(value) ? value : fallback;
+-}
+-
+-function isValidUnixSeconds(value) {
+-  return Number.isFinite(value) &amp;&amp; value &gt;= 0 &amp;&amp; value &lt;= MAX_DATE_SECONDS;
+-}
+-
+-function normalizeLocations(locations) {
+-  if (!Array.isArray(locations)) return [];
+-
+-  return locations.flatMap((location) =&gt; {
+-    if (!location || typeof location !== &quot;object&quot;) return [];
+-    const description = safeString(location.description);
+-    const latitude = safeNumber(location.latitude, null);
+-    const longitude = safeNumber(location.longitude, null);
+-    if (!description) return [];
+-    if (latitude === null || longitude === null) return [{ description }];
+-    return [{ description, latitude, longitude }];
+-  });
+-}
+-
+-function normalizeEvent(event) {
+-  if (!event || typeof event !== &quot;object&quot;) return null;
+-
+-  const eventId = nonEmptyString(event.eventId);
+-  const name = nonEmptyString(event.name);
+-  const startTime = safeNumber(event.startTime, null);
+-  const endTime = safeNumber(event.endTime, null);
+-
+-  if (
+-    !eventId ||
+-    !name ||
+-    !isValidUnixSeconds(startTime) ||
+-    !isValidUnixSeconds(endTime) ||
+-    endTime &lt; startTime
+-  ) {
+-    return null;
+-  }
+-
+-  return {
+-    eventId,
+-    name,
+-    description: safeString(event.description),
+-    startTime,
+-    endTime,
+-    eventType: nonEmptyString(event.eventType) || &quot;OTHER&quot;,
+-    locations: normalizeLocations(event.locations),
+-    sponsor: safeString(event.sponsor),
+-    points: safeNumber(event.points),
+-    isAsync: event.isAsync === true,
+-    menu: Array.isArray(event.menu)
+-      ? event.menu.filter((item) =&gt; typeof item === &quot;string&quot;)
+-      : [],
+-    mapImageUrl: safeString(event.mapImageUrl),
+-  };
+-}
+-
+-export function normalizeEvents(payload) {
+-  if (
+-    !payload ||
+-    typeof payload !== &quot;object&quot; ||
+-    !Array.isArray(payload.events)
+-  ) {
+-    throw new TypeError(&quot;Expected an event payload with an events array&quot;);
+-  }
+-
+-  const eventIds = new Set();
+-  const normalized = [];
+-  let publicRows = 0;
+-
+-  for (const event of payload.events) {
+-    if (event?.isStaff === true || event?.isPrivate === true) continue;
+-    publicRows += 1;
+-
+-    const safeEvent = normalizeEvent(event);
+-    if (!safeEvent) {
+-      logger.warn(&quot;Skipped invalid public event&quot;);
+-      continue;
+-    }
+-    if (eventIds.has(safeEvent.eventId)) {
+-      logger.warn(&quot;Skipped duplicate public event&quot;, safeEvent.eventId);
+-      continue;
+-    }
+-
+-    eventIds.add(safeEvent.eventId);
+-    normalized.push(safeEvent);
+-  }
+-
+-  if (publicRows &gt; 0 &amp;&amp; normalized.length === 0) {
+-    throw new TypeError(&quot;Event payload contained no valid public events&quot;);
+-  }
+-
+-  return normalized.sort(
+-    (first, second) =&gt;
+-      first.startTime - second.startTime ||
+-      first.endTime - second.endTime ||
+-      first.eventId.localeCompare(second.eventId),
+-  );
+-}
+-
+-export function dayKey(seconds) {
+-  const parts = Object.fromEntries(
+-    DATE_PARTS.formatToParts(new Date(seconds * 1000))
+-      .filter(({ type }) =&gt; type !== &quot;literal&quot;)
+-      .map(({ type, value }) =&gt; [type, value]),
+-  );
+-  return `${parts.year}-${parts.month}-${parts.day}`;
+-}
+-
+-export function getDays(events) {
+-  return [
+-    ...new Set(
+-      events
+-        .filter((event) =&gt; Number.isFinite(event?.startTime))
+-        .map((event) =&gt; dayKey(event.startTime)),
+-    ),
+-  ].sort();
+-}
+-
+-export function formatDay(
+-  key,
+-  options = { weekday: &quot;long&quot;, month: &quot;long&quot;, day: &quot;numeric&quot; },
+-) {
+-  if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return &quot;&quot;;
+-  return new Intl.DateTimeFormat(&quot;en-US&quot;, {
+-    timeZone: TIME_ZONE,
+-    ...options,
+-  }).format(new Date(`${key}T12:00:00.000Z`));
+-}
+-
+-export function formatTime(seconds) {
+-  return TIME_FORMATTER.format(new Date(seconds * 1000));
+-}
+-
+-export function typeLabel(type) {
+-  const normalized = nonEmptyString(type);
+-  if (!normalized) return &quot;Event&quot;;
+-  if (TYPE_LABELS[normalized]) return TYPE_LABELS[normalized];
+-  return (
+-    normalized
+-      .toLowerCase()
+-      .split(/[_\s-]+/)
+-      .filter(Boolean)
+-      .map((word) =&gt; word[0].toUpperCase() + word.slice(1))
+-      .join(&quot; &quot;) || &quot;Event&quot;
+-  );
+-}
+ 
+ function responseDetails(payload) {
+   if (!payload || typeof payload !== &quot;object&quot;)
+diff --git a/src/schedule/data/events.test.js b/src/schedule/data/events.test.js
+index f8b1f12..c1def67 100644
+--- a/src/schedule/data/events.test.js
++++ b/src/schedule/data/events.test.js
+@@ -1,17 +1,7 @@
+ import assert from &quot;node:assert/strict&quot;;
+ import test from &quot;node:test&quot;;
+ 
+-import {
+-  API_URL,
+-  TIME_ZONE,
+-  dayKey,
+-  fetchEvents,
+-  formatDay,
+-  formatTime,
+-  getDays,
+-  normalizeEvents,
+-  typeLabel,
+-} from &quot;./events.js&quot;;
++import { API_URL, TIME_ZONE, normalizeEvents } from &quot;./events.js&quot;;
+ 
+ const publicEvent = (overrides = {}) =&gt; ({
+   eventId: &quot;event-a&quot;,
+@@ -118,66 +108,3 @@ test(&quot;rejects malformed top-level payloads and public input with no valid rows&quot;,
+ test(&quot;allows an empty response&quot;, () =&gt; {
+   assert.deepEqual(normalizeEvents({ events: [] }), []);
+ });
+-
+-test(&quot;uses Chicago calendar days around midnight and formats dates and times&quot;, () =&gt; {
+-  assert.equal(dayKey(1772323200), &quot;2026-02-28&quot;);
+-  assert.deepEqual(
+-    getDays([{ startTime: 1772341200 }, { startTime: 1772344800 }]),
+-    [&quot;2026-02-28&quot;, &quot;2026-03-01&quot;],
+-  );
+-  assert.equal(
+-    formatDay(&quot;2026-02-28&quot;, {
+-      weekday: &quot;short&quot;,
+-      month: &quot;short&quot;,
+-      day: &quot;numeric&quot;,
+-    }),
+-    &quot;Sat, Feb 28&quot;,
+-  );
+-  assert.equal(formatTime(1772344800), &quot;12:00 AM&quot;);
+-});
+-
+-test(&quot;gives known event types friendly labels and safely humanizes unknown types&quot;, () =&gt; {
+-  assert.equal(typeLabel(&quot;MINIEVENT&quot;), &quot;Mini Event&quot;);
+-  assert.equal(typeLabel(&quot;WORKSHOP&quot;), &quot;Workshop&quot;);
+-  assert.equal(typeLabel(&quot;SIDEQUEST&quot;), &quot;Side Quest&quot;);
+-  assert.equal(typeLabel(&quot;QNA&quot;), &quot;Q&amp;A&quot;);
+-  assert.equal(typeLabel(&quot;MEETING&quot;), &quot;Meeting&quot;);
+-  assert.equal(typeLabel(&quot;STAFFSHIFT&quot;), &quot;Staff Shift&quot;);
+-  assert.equal(typeLabel(&quot;COMMUNITY_BUILD&quot;), &quot;Community Build&quot;);
+-  assert.equal(typeLabel(&quot;MYSTERY_MODE&quot;), &quot;Mystery Mode&quot;);
+-  assert.equal(typeLabel(), &quot;Event&quot;);
+-});
+-
+-test(&quot;fetchEvents rejects unsuccessful responses and malformed successful payloads&quot;, async () =&gt; {
+-  const originalFetch = globalThis.fetch;
+-  try {
+-    globalThis.fetch = async () =&gt; ({ ok: false, status: 503 });
+-    await assert.rejects(fetchEvents(), /503/);
+-
+-    globalThis.fetch = async () =&gt; ({
+-      ok: true,
+-      json: async () =&gt; ({ events: null }),
+-    });
+-    await assert.rejects(fetchEvents(), /events array/);
+-  } finally {
+-    globalThis.fetch = originalFetch;
+-  }
+-});
+-
+-test(&quot;fetchEvents requests the public endpoint without credentials and normalizes its response&quot;, async () =&gt; {
+-  let request;
+-  const originalFetch = globalThis.fetch;
+-  try {
+-    globalThis.fetch = async (url, options) =&gt; {
+-      request = { url, options };
+-      return { ok: true, json: async () =&gt; ({ events: [publicEvent()] }) };
+-    };
+-    const events = await fetchEvents();
+-
+-    assert.equal(request.url, API_URL);
+-    assert.equal(request.options.credentials, &quot;omit&quot;);
+-    assert.equal(events[0].eventId, &quot;event-a&quot;);
+-  } finally {
+-    globalThis.fetch = originalFetch;
+-  }
+-});
+diff --git a/src/schedule/data/formatting/format.js b/src/schedule/data/formatting/format.js
+new file mode 100644
+index 0000000..c1084a6
+--- /dev/null
++++ b/src/schedule/data/formatting/format.js
+@@ -0,0 +1,77 @@
++export const TIME_ZONE = &quot;America/Chicago&quot;;
++
++const DATE_PARTS = new Intl.DateTimeFormat(&quot;en-US&quot;, {
++  timeZone: TIME_ZONE,
++  year: &quot;numeric&quot;,
++  month: &quot;2-digit&quot;,
++  day: &quot;2-digit&quot;,
++});
++
++const TIME_FORMATTER = new Intl.DateTimeFormat(&quot;en-US&quot;, {
++  timeZone: TIME_ZONE,
++  hour: &quot;numeric&quot;,
++  minute: &quot;2-digit&quot;,
++  hour12: true,
++});
++
++const TYPE_LABELS = {
++  CEREMONY: &quot;Ceremony&quot;,
++  MEAL: &quot;Meal&quot;,
++  MEETING: &quot;Meeting&quot;,
++  MINIEVENT: &quot;Mini Event&quot;,
++  OTHER: &quot;Other&quot;,
++  QNA: &quot;Q&amp;A&quot;,
++  SIDEQUEST: &quot;Side Quest&quot;,
++  SOCIAL: &quot;Social&quot;,
++  SPEAKER: &quot;Speaker Event&quot;,
++  STAFFSHIFT: &quot;Staff Shift&quot;,
++  WORKSHOP: &quot;Workshop&quot;,
++};
++
++export function dayKey(seconds) {
++  const parts = Object.fromEntries(
++    DATE_PARTS.formatToParts(new Date(seconds * 1000))
++      .filter(({ type }) =&gt; type !== &quot;literal&quot;)
++      .map(({ type, value }) =&gt; [type, value]),
++  );
++  return `${parts.year}-${parts.month}-${parts.day}`;
++}
++
++export function getDays(events) {
++  return [
++    ...new Set(
++      events
++        .filter((event) =&gt; Number.isFinite(event?.startTime))
++        .map((event) =&gt; dayKey(event.startTime)),
++    ),
++  ].sort();
++}
++
++export function formatDay(
++  key,
++  options = { weekday: &quot;long&quot;, month: &quot;long&quot;, day: &quot;numeric&quot; },
++) {
++  if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return &quot;&quot;;
++  return new Intl.DateTimeFormat(&quot;en-US&quot;, {
++    timeZone: TIME_ZONE,
++    ...options,
++  }).format(new Date(`${key}T12:00:00.000Z`));
++}
++
++export function formatTime(seconds) {
++  return TIME_FORMATTER.format(new Date(seconds * 1000));
++}
++
++export function typeLabel(type) {
++  const normalized = typeof type === &quot;string&quot; ? type.trim() : &quot;&quot;;
++  if (!normalized) return &quot;Event&quot;;
++  if (TYPE_LABELS[normalized]) return TYPE_LABELS[normalized];
++  return (
++    normalized
++      .toLowerCase()
++      .split(/[_\s-]+/)
++      .filter(Boolean)
++      .map((word) =&gt; word[0].toUpperCase() + word.slice(1))
++      .join(&quot; &quot;) || &quot;Event&quot;
++  );
++}
+diff --git a/src/schedule/data/request.test.js b/src/schedule/data/request.test.js
+new file mode 100644
+index 0000000..5df1ef8
+--- /dev/null
++++ b/src/schedule/data/request.test.js
+@@ -0,0 +1,91 @@
++import assert from &quot;node:assert/strict&quot;;
++import test from &quot;node:test&quot;;
++
++import {
++  API_URL,
++  dayKey,
++  fetchEvents,
++  formatDay,
++  formatTime,
++  getDays,
++  typeLabel,
++} from &quot;./events.js&quot;;
++
++const publicEvent = (overrides = {}) =&gt; ({
++  eventId: &quot;event-a&quot;,
++  name: &quot;Welcome&quot;,
++  description: &quot;Say hello&quot;,
++  startTime: 1772222400,
++  endTime: 1772226000,
++  eventType: &quot;WORKSHOP&quot;,
++  locations: [{ description: &quot;Siebel&quot;, latitude: 40.1, longitude: -88.2 }],
++  sponsor: &quot;HackIllinois&quot;,
++  points: 10,
++  isAsync: false,
++  menu: [&quot;Pizza&quot;],
++  mapImageUrl: &quot;https://example.test/map.png&quot;,
++  ...overrides,
++});
++
++test(&quot;uses Chicago calendar days around midnight and formats dates and times&quot;, () =&gt; {
++  assert.equal(dayKey(1772323200), &quot;2026-02-28&quot;);
++  assert.deepEqual(
++    getDays([{ startTime: 1772341200 }, { startTime: 1772344800 }]),
++    [&quot;2026-02-28&quot;, &quot;2026-03-01&quot;],
++  );
++  assert.equal(
++    formatDay(&quot;2026-02-28&quot;, {
++      weekday: &quot;short&quot;,
++      month: &quot;short&quot;,
++      day: &quot;numeric&quot;,
++    }),
++    &quot;Sat, Feb 28&quot;,
++  );
++  assert.equal(formatTime(1772344800), &quot;12:00 AM&quot;);
++});
++
++test(&quot;gives known event types friendly labels and safely humanizes unknown types&quot;, () =&gt; {
++  assert.equal(typeLabel(&quot;MINIEVENT&quot;), &quot;Mini Event&quot;);
++  assert.equal(typeLabel(&quot;WORKSHOP&quot;), &quot;Workshop&quot;);
++  assert.equal(typeLabel(&quot;SIDEQUEST&quot;), &quot;Side Quest&quot;);
++  assert.equal(typeLabel(&quot;QNA&quot;), &quot;Q&amp;A&quot;);
++  assert.equal(typeLabel(&quot;MEETING&quot;), &quot;Meeting&quot;);
++  assert.equal(typeLabel(&quot;STAFFSHIFT&quot;), &quot;Staff Shift&quot;);
++  assert.equal(typeLabel(&quot;COMMUNITY_BUILD&quot;), &quot;Community Build&quot;);
++  assert.equal(typeLabel(&quot;MYSTERY_MODE&quot;), &quot;Mystery Mode&quot;);
++  assert.equal(typeLabel(), &quot;Event&quot;);
++});
++
++test(&quot;fetchEvents rejects unsuccessful responses and malformed successful payloads&quot;, async () =&gt; {
++  const originalFetch = globalThis.fetch;
++  try {
++    globalThis.fetch = async () =&gt; ({ ok: false, status: 503 });
++    await assert.rejects(fetchEvents(), /503/);
++
++    globalThis.fetch = async () =&gt; ({
++      ok: true,
++      json: async () =&gt; ({ events: null }),
++    });
++    await assert.rejects(fetchEvents(), /events array/);
++  } finally {
++    globalThis.fetch = originalFetch;
++  }
++});
++
++test(&quot;fetchEvents requests the public endpoint without credentials and normalizes its response&quot;, async () =&gt; {
++  let request;
++  const originalFetch = globalThis.fetch;
++  try {
++    globalThis.fetch = async (url, options) =&gt; {
++      request = { url, options };
++      return { ok: true, json: async () =&gt; ({ events: [publicEvent()] }) };
++    };
++    const events = await fetchEvents();
++
++    assert.equal(request.url, API_URL);
++    assert.equal(request.options.credentials, &quot;omit&quot;);
++    assert.equal(events[0].eventId, &quot;event-a&quot;);
++  } finally {
++    globalThis.fetch = originalFetch;
++  }
++});
+diff --git a/src/schedule/data/validation/normalize.js b/src/schedule/data/validation/normalize.js
+new file mode 100644
+index 0000000..b79dadb
+--- /dev/null
++++ b/src/schedule/data/validation/normalize.js
+@@ -0,0 +1,111 @@
++import { logger } from &quot;../diagnostics/logger.js&quot;;
++const MAX_DATE_SECONDS = 8_640_000_000_000;
++
++function nonEmptyString(value) {
++  return typeof value === &quot;string&quot; &amp;&amp; value.trim() ? value.trim() : null;
++}
++
++function safeString(value) {
++  return typeof value === &quot;string&quot; ? value : &quot;&quot;;
++}
++
++function safeNumber(value, fallback = 0) {
++  return Number.isFinite(value) ? value : fallback;
++}
++
++function isValidUnixSeconds(value) {
++  return Number.isFinite(value) &amp;&amp; value &gt;= 0 &amp;&amp; value &lt;= MAX_DATE_SECONDS;
++}
++
++function normalizeLocations(locations) {
++  if (!Array.isArray(locations)) return [];
++
++  return locations.flatMap((location) =&gt; {
++    if (!location || typeof location !== &quot;object&quot;) return [];
++    const description = safeString(location.description);
++    const latitude = safeNumber(location.latitude, null);
++    const longitude = safeNumber(location.longitude, null);
++    if (!description) return [];
++    if (latitude === null || longitude === null) return [{ description }];
++    return [{ description, latitude, longitude }];
++  });
++}
++
++function normalizeEvent(event) {
++  if (!event || typeof event !== &quot;object&quot;) return null;
++
++  const eventId = nonEmptyString(event.eventId);
++  const name = nonEmptyString(event.name);
++  const startTime = safeNumber(event.startTime, null);
++  const endTime = safeNumber(event.endTime, null);
++
++  if (
++    !eventId ||
++    !name ||
++    !isValidUnixSeconds(startTime) ||
++    !isValidUnixSeconds(endTime) ||
++    endTime &lt; startTime
++  ) {
++    return null;
++  }
++
++  return {
++    eventId,
++    name,
++    description: safeString(event.description),
++    startTime,
++    endTime,
++    eventType: nonEmptyString(event.eventType) || &quot;OTHER&quot;,
++    locations: normalizeLocations(event.locations),
++    sponsor: safeString(event.sponsor),
++    points: safeNumber(event.points),
++    isAsync: event.isAsync === true,
++    menu: Array.isArray(event.menu)
++      ? event.menu.filter((item) =&gt; typeof item === &quot;string&quot;)
++      : [],
++    mapImageUrl: safeString(event.mapImageUrl),
++  };
++}
++
++export function normalizeEvents(payload) {
++  if (
++    !payload ||
++    typeof payload !== &quot;object&quot; ||
++    !Array.isArray(payload.events)
++  ) {
++    throw new TypeError(&quot;Expected an event payload with an events array&quot;);
++  }
++
++  const eventIds = new Set();
++  const normalized = [];
++  let publicRows = 0;
++
++  for (const event of payload.events) {
++    if (event?.isStaff === true || event?.isPrivate === true) continue;
++    publicRows += 1;
++
++    const safeEvent = normalizeEvent(event);
++    if (!safeEvent) {
++      logger.warn(&quot;Skipped invalid public event&quot;);
++      continue;
++    }
++    if (eventIds.has(safeEvent.eventId)) {
++      logger.warn(&quot;Skipped duplicate public event&quot;, safeEvent.eventId);
++      continue;
++    }
++
++    eventIds.add(safeEvent.eventId);
++    normalized.push(safeEvent);
++  }
++
++  if (publicRows &gt; 0 &amp;&amp; normalized.length === 0) {
++    throw new TypeError(&quot;Event payload contained no valid public events&quot;);
++  }
++
++  return normalized.sort(
++    (first, second) =&gt;
++      first.startTime - second.startTime ||
++      first.endTime - second.endTime ||
++      first.eventId.localeCompare(second.eventId),
++  );
++}
+diff --git a/src/schedule/google/GoogleExport.jsx b/src/schedule/google/GoogleExport.jsx
+index 45ad983..bea9e3f 100644
+--- a/src/schedule/google/GoogleExport.jsx
++++ b/src/schedule/google/GoogleExport.jsx
+@@ -1,6 +1,6 @@
+ import React, { useEffect, useRef, useState } from &quot;react&quot;;
+ import { exportToGoogle, GOOGLE_SCOPE } from &quot;./calendar.js&quot;;
+-import { logger } from &quot;../data/logger.js&quot;;
++import { logger } from &quot;../data/diagnostics/logger.js&quot;;
+ let scriptPromise;
+ function loadGoogle() {
+   if (window.google?.accounts?.oauth2) return Promise.resolve();
+diff --git a/src/schedule/google/calendar.js b/src/schedule/google/calendar.js
+index b2b4c1e..f69456c 100644
+--- a/src/schedule/google/calendar.js
++++ b/src/schedule/google/calendar.js
+@@ -1,4 +1,4 @@
+-import { logger } from &quot;../data/logger.js&quot;;
++import { logger } from &quot;../data/diagnostics/logger.js&quot;;
+ export const GOOGLE_SCOPE = &quot;https://www.googleapis.com/auth/calendar.events&quot;;
+ export async function exportToGoogle(events, token) {
+   const result = { added: 0, existing: 0, failed: [], authExpired: false };
+diff --git a/src/schedule/plan-view/EventList.jsx b/src/schedule/plan-view/EventList.jsx
+new file mode 100644
+index 0000000..cd4d21f
+--- /dev/null
++++ b/src/schedule/plan-view/EventList.jsx
+@@ -0,0 +1,80 @@
++import React from &quot;react&quot;;
++import { dayKey, formatDay } from &quot;../data/events.js&quot;;
++import EventCard from &quot;../view/EventCard.jsx&quot;;
++import EventRoute from &quot;../route/EventRoute.jsx&quot;;
++export default function EventList({
++  events,
++  visible,
++  savedEvents,
++  saved,
++  toggle,
++  now,
++  mySchedule,
++  day,
++  paused,
++  setRouteProgress,
++  clearFilters,
++}) {
++  return (
++    &lt;&gt;
++      {events.length &gt; 0 &amp;&amp; (
++        &lt;&gt;
++          &lt;div className=&quot;day-heading&quot;&gt;
++            &lt;h2&gt;{mySchedule ? &quot;Your starred events&quot; : formatDay(day)}&lt;/h2&gt;
++            &lt;span aria-live=&quot;polite&quot;&gt;
++              {visible.length} {visible.length === 1 ? &quot;event&quot; : &quot;events&quot;}
++            &lt;/span&gt;
++          &lt;/div&gt;
++          &lt;section className=&quot;event-list&quot; aria-label=&quot;Schedule events&quot;&gt;
++            &lt;EventRoute
++              events={visible}
++              paused={paused}
++              onProgress={setRouteProgress}
++            /&gt;
++
++            {visible.map((event, index) =&gt; (
++              &lt;React.Fragment key={event.eventId}&gt;
++                {mySchedule &amp;&amp;
++                  (index === 0 ||
++                    dayKey(event.startTime) !==
++                      dayKey(visible[index - 1].startTime)) &amp;&amp; (
++                    &lt;h3 className=&quot;plan-day&quot;&gt;
++                      {formatDay(dayKey(event.startTime))}
++                    &lt;/h3&gt;
++                  )}
++                &lt;EventCard
++                  event={event}
++                  saved={saved.has(event.eventId)}
++                  onToggle={toggle}
++                  now={now}
++                  conflicts={
++                    saved.has(event.eventId)
++                      ? savedEvents.filter(
++                          (other) =&gt;
++                            other.eventId !== event.eventId &amp;&amp;
++                            other.startTime &lt; event.endTime &amp;&amp;
++                            event.startTime &lt; other.endTime,
++                        )
++                      : []
++                  }
++                /&gt;
++              &lt;/React.Fragment&gt;
++            ))}
++          &lt;/section&gt;
++          {!visible.length &amp;&amp; (
++            &lt;div className=&quot;notice&quot;&gt;
++              &lt;p&gt;
++                {mySchedule
++                  ? &quot;Star events to start building your schedule.&quot;
++                  : &quot;No events match your filters.&quot;}
++              &lt;/p&gt;
++              &lt;button onClick={clearFilters}&gt;
++                {mySchedule ? &quot;Browse events&quot; : &quot;Clear filters&quot;}
++              &lt;/button&gt;
++            &lt;/div&gt;
++          )}
++        &lt;/&gt;
++      )}
++    &lt;/&gt;
++  );
++}
+diff --git a/src/schedule/route/EventRoute.jsx b/src/schedule/route/EventRoute.jsx
+index 304098c..31dfa55 100644
+--- a/src/schedule/route/EventRoute.jsx
++++ b/src/schedule/route/EventRoute.jsx
+@@ -1,5 +1,5 @@
+ import React, { useEffect, useState } from &quot;react&quot;;
+-import { logger } from &quot;../data/logger.js&quot;;
++import { logger } from &quot;../data/diagnostics/logger.js&quot;;
+ import &quot;./route.css&quot;;
+ 
+ export default function EventRoute({ events, paused, onProgress }) {
+diff --git a/src/schedule/state/useSchedule.js b/src/schedule/state/useSchedule.js
+index 7f39275..15c0e91 100644
+--- a/src/schedule/state/useSchedule.js
++++ b/src/schedule/state/useSchedule.js
+@@ -1,6 +1,6 @@
+ import { useEffect, useState } from &quot;react&quot;;
+ import { fetchEvents } from &quot;../data/events.js&quot;;
+-import { logger } from &quot;../data/logger.js&quot;;
++import { logger } from &quot;../data/diagnostics/logger.js&quot;;
+ const SAVED_KEY = &quot;hackillinois:saved-events&quot;;
+ export function useSavedEvents() {
+   const [storageError, setStorageError] = useState(false);
+diff --git a/src/schedule/status/ScheduleFooter.jsx b/src/schedule/status/ScheduleFooter.jsx
+new file mode 100644
+index 0000000..2229677
+--- /dev/null
++++ b/src/schedule/status/ScheduleFooter.jsx
+@@ -0,0 +1,27 @@
++import React from &quot;react&quot;;
++export default function ScheduleFooter({ updatedAt, refresh, loading }) {
++  return (
++    &lt;footer className=&quot;schedule-footer&quot;&gt;
++      &lt;p&gt;
++        Events from &lt;a href=&quot;https://hackillinois.org/&quot;&gt;HackIllinois&lt;/a&gt;. Saved
++        events stay on this browser.
++      &lt;/p&gt;
++      {updatedAt &amp;&amp; (
++        &lt;p&gt;
++          Last checked{&quot; &quot;}
++          {updatedAt.toLocaleTimeString(&quot;en-US&quot;, {
++            hour: &quot;numeric&quot;,
++            minute: &quot;2-digit&quot;,
++          })}
++          .{&quot; &quot;}
++          &lt;button onClick={refresh} disabled={loading}&gt;
++            Refresh
++          &lt;/button&gt;
++        &lt;/p&gt;
++      )}
++      &lt;p className=&quot;archive-note&quot;&gt;
++        Home, Mentors and Prizes link to the 2021 site.
++      &lt;/p&gt;
++    &lt;/footer&gt;
++  );
++}
+diff --git a/src/schedule/status/ScheduleNotices.jsx b/src/schedule/status/ScheduleNotices.jsx
+new file mode 100644
+index 0000000..90f253b
+--- /dev/null
++++ b/src/schedule/status/ScheduleNotices.jsx
+@@ -0,0 +1,39 @@
++import React from &quot;react&quot;;
++export default function ScheduleNotices({
++  storageError,
++  loading,
++  events,
++  error,
++  refresh,
++}) {
++  return (
++    &lt;&gt;
++      {storageError &amp;&amp; (
++        &lt;p role=&quot;status&quot; className=&quot;notice&quot;&gt;
++          Your browser could not save your selections. They will last until you
++          leave this page.
++        &lt;/p&gt;
++      )}
++      {loading &amp;&amp; (
++        &lt;p role=&quot;status&quot; className=&quot;notice&quot;&gt;
++          {events.length ? &quot;Refreshing the schedule…&quot; : &quot;Loading the schedule…&quot;}
++        &lt;/p&gt;
++      )}
++      {error &amp;&amp; (
++        &lt;div role=&quot;alert&quot; className=&quot;notice error&quot;&gt;
++          &lt;p&gt;{error}&lt;/p&gt;
++          {events.length &gt; 0 &amp;&amp; (
++            &lt;p&gt;Previously loaded events are still shown below.&lt;/p&gt;
++          )}
++          &lt;button onClick={refresh}&gt;Try again&lt;/button&gt;
++        &lt;/div&gt;
++      )}
++      {!loading &amp;&amp; !error &amp;&amp; !events.length &amp;&amp; (
++        &lt;div className=&quot;notice&quot;&gt;
++          &lt;p&gt;No events have been published yet.&lt;/p&gt;
++          &lt;button onClick={refresh}&gt;Refresh schedule&lt;/button&gt;
++        &lt;/div&gt;
++      )}
++    &lt;/&gt;
++  );
++}
+diff --git a/src/schedule/testing/Schedule.ui.test.jsx b/src/schedule/testing/Schedule.ui.test.jsx
+deleted file mode 100644
+index 8f2f5a3..0000000
+--- a/src/schedule/testing/Schedule.ui.test.jsx
++++ /dev/null
+@@ -1,476 +0,0 @@
+-import React from &quot;react&quot;;
+-import { webcrypto } from &quot;node:crypto&quot;;
+-import {
+-  render,
+-  screen,
+-  fireEvent,
+-  waitFor,
+-  act,
+-} from &quot;@testing-library/react&quot;;
+-import userEvent from &quot;@testing-library/user-event&quot;;
+-import { beforeEach, afterEach, vi, test, expect } from &quot;vitest&quot;;
+-import App from &quot;../../App.jsx&quot;;
+-const events = [
+-  {
+-    eventId: &quot;meal&quot;,
+-    name: &quot;Dinner&quot;,
+-    description: &quot;Fresh food&quot;,
+-    startTime: 1772233200,
+-    endTime: 1772236800,
+-    eventType: &quot;MEAL&quot;,
+-    locations: [{ description: &quot;Dining room&quot; }],
+-  },
+-  {
+-    eventId: &quot;code&quot;,
+-    name: &quot;Build a website&quot;,
+-    description: &quot;Learn React&quot;,
+-    startTime: 1772236800,
+-    endTime: 1772240400,
+-    eventType: &quot;WORKSHOP&quot;,
+-    locations: [{ description: &quot;Siebel&quot; }],
+-  },
+-];
+-beforeEach(() =&gt; {
+-  localStorage.clear();
+-  vi.stubGlobal(
+-    &quot;fetch&quot;,
+-    vi.fn().mockResolvedValue({ ok: true, json: async () =&gt; ({ events }) }),
+-  );
+-});
+-afterEach(() =&gt; {
+-  vi.unstubAllGlobals();
+-  vi.unstubAllEnvs();
+-});
+-test(&quot;renders original navigation and filters live-shaped data; saved events survive remount&quot;, async () =&gt; {
+-  const user = userEvent.setup();
+-  const first = render(&lt;App /&gt;);
+-  expect(
+-    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
+-  ).toBeInTheDocument();
+-  expect(screen.getByRole(&quot;link&quot;, { name: &quot;Mentors&quot; })).toHaveAttribute(
+-    &quot;href&quot;,
+-    &quot;https://2021.hackillinois.org/mentors&quot;,
+-  );
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
+-  expect(
+-    screen.queryByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
+-  ).not.toBeInTheDocument();
+-  first.unmount();
+-  render(&lt;App /&gt;);
+-  expect(
+-    await screen.findByRole(&quot;button&quot;, { name: &quot;Unsave Dinner&quot; }),
+-  ).toBeInTheDocument();
+-  await user.selectOptions(
+-    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
+-    &quot;WORKSHOP&quot;,
+-  );
+-  expect(
+-    screen.getByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
+-  ).toBeInTheDocument();
+-  expect(
+-    screen.queryByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
+-  ).not.toBeInTheDocument();
+-  await user.type(
+-    screen.getByRole(&quot;searchbox&quot;, { name: &quot;Search events&quot; }),
+-    &quot;no matches&quot;,
+-  );
+-  expect(screen.getByText(&quot;No events match your filters.&quot;)).toBeInTheDocument();
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Clear filters&quot; }));
+-  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
+-});
+-test(&quot;reports a failed request and retries successfully&quot;, async () =&gt; {
+-  fetch.mockRejectedValueOnce(new Error(&quot;Network unavailable&quot;));
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  expect(await screen.findByRole(&quot;alert&quot;)).toHaveTextContent(
+-    &quot;Could not load the schedule&quot;,
+-  );
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Try again&quot; }));
+-  expect(
+-    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
+-  ).toBeInTheDocument();
+-});
+-test(&quot;empty API data shows an honest empty state&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({ ok: true, json: async () =&gt; ({ events: [] }) });
+-  render(&lt;App /&gt;);
+-  expect(
+-    await screen.findByText(&quot;No events have been published yet.&quot;),
+-  ).toBeInTheDocument();
+-  expect(
+-    screen.queryByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
+-  ).not.toBeInTheDocument();
+-});
+-test(&quot;malformed saved data does not prevent loading&quot;, async () =&gt; {
+-  localStorage.setItem(&quot;hackillinois:saved-events&quot;, &quot;not json&quot;);
+-  render(&lt;App /&gt;);
+-  expect(
+-    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
+-  ).toBeInTheDocument();
+-});
+-test(&quot;a failed refresh keeps previously loaded events visible&quot;, async () =&gt; {
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  fetch.mockRejectedValueOnce(new Error(&quot;Offline&quot;));
+-  await user.click(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Refresh&quot;, exact: true }),
+-  );
+-  expect(await screen.findByRole(&quot;alert&quot;)).toHaveTextContent(
+-    &quot;Previously loaded events&quot;,
+-  );
+-  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
+-});
+-test(&quot;storage failure keeps the save action usable and explains its limit&quot;, async () =&gt; {
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  const blocked = vi
+-    .spyOn(Storage.prototype, &quot;setItem&quot;)
+-    .mockImplementation(() =&gt; {
+-      throw new Error(&quot;Storage unavailable&quot;);
+-    });
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  expect(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Unsave Dinner&quot; }),
+-  ).toBeInTheDocument();
+-  expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(
+-    &quot;could not save your selections&quot;,
+-  );
+-  blocked.mockRestore();
+-});
+-test(&quot;event details render API text without interpreting HTML&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [
+-        {
+-          ...events[0],
+-          description: &quot;&lt;script&gt;bad()&lt;/script&gt; https://example.com/info&quot;,
+-          mapImageUrl: &quot;javascript:bad()&quot;,
+-        },
+-      ],
+-    }),
+-  });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await user.click(await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }));
+-  expect(screen.getByText(/&lt;script&gt;bad\(\)&lt;\/script&gt;/)).toBeInTheDocument();
+-  expect(
+-    screen.getByRole(&quot;link&quot;, { name: &quot;https://example.com/info&quot; }),
+-  ).toHaveAttribute(&quot;href&quot;, &quot;https://example.com/info&quot;);
+-  expect(
+-    screen.queryByRole(&quot;link&quot;, { name: /View venue map/ }),
+-  ).not.toBeInTheDocument();
+-});
+-
+-test(&quot;location actions use each venue&#x27;s coordinates and stay outside the expandable details&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [
+-        {
+-          ...events[0],
+-          locations: [
+-            {
+-              description: &quot;Siebel CS Lobby&quot;,
+-              latitude: 40.113812,
+-              longitude: -88.224937,
+-            },
+-            { description: &quot;Second venue&quot;, latitude: 40.1, longitude: -88.3 },
+-          ],
+-        },
+-      ],
+-    }),
+-  });
+-  render(&lt;App /&gt;);
+-  const first = await screen.findByRole(&quot;link&quot;, {
+-    name: &quot;Open location: Siebel CS Lobby&quot;,
+-  });
+-  expect(new URL(first.href).searchParams.get(&quot;query&quot;)).toBe(
+-    &quot;40.113812,-88.224937&quot;,
+-  );
+-  expect(new URL(first.href).searchParams.get(&quot;api&quot;)).toBe(&quot;1&quot;);
+-  expect(first.closest(&quot;details&quot;)).toBeNull();
+-  expect(first).toHaveAttribute(&quot;target&quot;, &quot;_blank&quot;);
+-  const second = screen.getByRole(&quot;link&quot;, {
+-    name: &quot;Open location: Second venue&quot;,
+-  });
+-  expect(new URL(second.href).searchParams.get(&quot;query&quot;)).toBe(&quot;40.1,-88.3&quot;);
+-});
+-test(&quot;location links fall back to a name search and missing locations do not get a fake link&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [events[0], { ...events[1], locations: [] }],
+-    }),
+-  });
+-  render(&lt;App /&gt;);
+-  const link = await screen.findByRole(&quot;link&quot;, {
+-    name: &quot;Open location: Dining room&quot;,
+-  });
+-  expect(new URL(link.href).searchParams.get(&quot;query&quot;)).toBe(&quot;Dining room&quot;);
+-  expect(screen.getAllByRole(&quot;link&quot;, { name: /Open location:/ })).toHaveLength(
+-    1,
+-  );
+-  expect(screen.getByText(&quot;Location to be announced&quot;)).toBeInTheDocument();
+-});
+-
+-test(&quot;scroll moves the route boat and choosing a stop opens that event&quot;, async () =&gt; {
+-  const geometry = vi
+-    .spyOn(HTMLElement.prototype, &quot;getBoundingClientRect&quot;)
+-    .mockReturnValue({ top: 500 });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  const first = screen.getByRole(&quot;button&quot;, { name: &quot;Go to Dinner&quot; });
+-  const second = screen.getByRole(&quot;button&quot;, { name: &quot;Go to Build a website&quot; });
+-  expect(first).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;);
+-  expect(first.closest(&#x27;section[aria-label=&quot;Schedule events&quot;]&#x27;)).not.toBeNull();
+-  expect(
+-    screen.queryByRole(&quot;button&quot;, { name: /Open route/ }),
+-  ).not.toBeInTheDocument();
+-  expect(screen.getAllByText(&quot;Dinner&quot;, { exact: true })).toHaveLength(1);
+-  geometry.mockRestore();
+-  const cards = document.querySelectorAll(&quot;article.event&quot;);
+-  vi.spyOn(cards[0], &quot;getBoundingClientRect&quot;).mockReturnValue({ top: -300 });
+-  vi.spyOn(cards[1], &quot;getBoundingClientRect&quot;).mockReturnValue({ top: 150 });
+-  fireEvent.scroll(window);
+-  await waitFor(() =&gt; expect(second).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;));
+-  const scroll = vi.fn();
+-  cards[0].scrollIntoView = scroll;
+-  await user.click(first);
+-  expect(scroll).toHaveBeenCalled();
+-  expect(cards[0].querySelector(&quot;details&quot;)).toHaveAttribute(&quot;open&quot;);
+-  await user.type(screen.getByRole(&quot;searchbox&quot;), &quot;nothing matches&quot;);
+-  expect(
+-    screen.queryByRole(&quot;navigation&quot;, { name: &quot;Event route&quot; }),
+-  ).not.toBeInTheDocument();
+-});
+-
+-test(&quot;saved overlaps are labeled and changing days replaces route stops&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [
+-        events[0],
+-        { ...events[1], startTime: events[0].startTime + 60 },
+-        {
+-          ...events[0],
+-          eventId: &quot;next&quot;,
+-          name: &quot;Next day meal&quot;,
+-          startTime: events[0].startTime + 86400,
+-          endTime: events[0].endTime + 86400,
+-        },
+-      ],
+-    }),
+-  });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  await user.click(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Save Build a website&quot; }),
+-  );
+-  expect(screen.getAllByText(&quot;Overlaps a saved event&quot;)).toHaveLength(2);
+-  await user.click(screen.getByRole(&quot;radio&quot;, { name: /Saturday/ }));
+-  expect(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Go to Next day meal&quot; }),
+-  ).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;);
+-  expect(
+-    screen.queryByRole(&quot;button&quot;, { name: &quot;Go to Dinner&quot; }),
+-  ).not.toBeInTheDocument();
+-});
+-
+-test(&quot;the final scroll pixels do not teleport the boat past the penultimate event&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [
+-        ...events,
+-        {
+-          ...events[1],
+-          eventId: &quot;last&quot;,
+-          name: &quot;Last event&quot;,
+-          startTime: events[1].startTime + 3600,
+-          endTime: events[1].endTime + 3600,
+-        },
+-      ],
+-    }),
+-  });
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Last event&quot; });
+-  vi.stubGlobal(&quot;innerHeight&quot;, 600);
+-  vi.stubGlobal(&quot;scrollY&quot;, 797);
+-  const height = vi
+-    .spyOn(document.documentElement, &quot;scrollHeight&quot;, &quot;get&quot;)
+-    .mockReturnValue(1400);
+-  document.querySelectorAll(&quot;article.event&quot;).forEach((card, index) =&gt; {
+-    Object.defineProperty(card, &quot;offsetTop&quot;, {
+-      configurable: true,
+-      value: index * 300,
+-    });
+-    vi.spyOn(card, &quot;getBoundingClientRect&quot;).mockImplementation(() =&gt; ({
+-      top: 400 + index * 300 - window.scrollY,
+-    }));
+-  });
+-  fireEvent.scroll(window);
+-  const boat = document.querySelector(&quot;.sailing-boat&quot;);
+-  await waitFor(() =&gt; expect(parseFloat(boat.style.top)).toBeGreaterThan(300));
+-  const before = parseFloat(boat.style.top);
+-  vi.stubGlobal(&quot;scrollY&quot;, 798);
+-  fireEvent.scroll(window);
+-  await act(async () =&gt; {
+-    await new Promise((resolve) =&gt; requestAnimationFrame(resolve));
+-  });
+-  expect(Math.abs(parseFloat(boat.style.top) - before)).toBeLessThan(10);
+-  vi.stubGlobal(&quot;scrollY&quot;, 800);
+-  fireEvent.scroll(window);
+-  await waitFor(() =&gt;
+-    expect(
+-      screen.getByRole(&quot;button&quot;, { name: &quot;Go to Last event&quot; }),
+-    ).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;),
+-  );
+-  height.mockRestore();
+-});
+-
+-test(&quot;My schedule shows all starred days and explains an empty plan&quot;, async () =&gt; {
+-  const tomorrow = {
+-    ...events[1],
+-    eventId: &quot;tomorrow&quot;,
+-    name: &quot;Tomorrow workshop&quot;,
+-    startTime: events[1].startTime + 86400,
+-    endTime: events[1].endTime + 86400,
+-  };
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({ events: [...events, tomorrow] }),
+-  });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
+-  expect(
+-    screen.getByText(&quot;Star events to start building your schedule.&quot;),
+-  ).toBeInTheDocument();
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;All events&quot; }));
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  await user.click(screen.getByRole(&quot;radio&quot;, { name: /Saturday/ }));
+-  await user.click(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Save Tomorrow workshop&quot; }),
+-  );
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
+-  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
+-  expect(
+-    screen.getByRole(&quot;heading&quot;, { name: &quot;Tomorrow workshop&quot; }),
+-  ).toBeInTheDocument();
+-  expect(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Export to Google Calendar&quot; }),
+-  ).toBeInTheDocument();
+-});
+-test(&quot;a hidden saved event still produces a named conflict warning&quot;, async () =&gt; {
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({
+-      events: [
+-        events[0],
+-        { ...events[1], startTime: events[0].startTime + 60 },
+-      ],
+-    }),
+-  });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  await user.click(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Save Build a website&quot; }),
+-  );
+-  await user.selectOptions(
+-    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
+-    &quot;MEAL&quot;,
+-  );
+-  expect(
+-    screen.queryByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
+-  ).not.toBeInTheDocument();
+-  expect(screen.getByText(/Conflict with Build a website/)).toHaveTextContent(
+-    &quot;Conflict with Build a website from 5:01 PM to 6:00 PM · Feb 27&quot;,
+-  );
+-});
+-
+-test(&quot;Google export includes the whole weekend regardless of filters, or only favorites&quot;, async () =&gt; {
+-  const tomorrow = {
+-    ...events[1],
+-    eventId: &quot;tomorrow&quot;,
+-    name: &quot;Tomorrow workshop&quot;,
+-    startTime: events[1].startTime + 86400,
+-    endTime: events[1].endTime + 86400,
+-  };
+-  fetch.mockResolvedValueOnce({
+-    ok: true,
+-    json: async () =&gt; ({ events: [...events, tomorrow] }),
+-  });
+-  fetch.mockResolvedValue({ ok: true, status: 200 });
+-  vi.stubEnv(&quot;VITE_GOOGLE_CLIENT_ID&quot;, &quot;test.apps.googleusercontent.com&quot;);
+-  vi.stubGlobal(&quot;crypto&quot;, webcrypto);
+-  vi.stubGlobal(&quot;google&quot;, {
+-    accounts: {
+-      oauth2: {
+-        hasGrantedAllScopes: () =&gt; true,
+-        initTokenClient: (config) =&gt; ({
+-          requestAccessToken: () =&gt;
+-            config.callback({ access_token: &quot;temporary-test-token&quot; }),
+-        }),
+-      },
+-    },
+-  });
+-  const user = userEvent.setup();
+-  render(&lt;App /&gt;);
+-  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
+-  await user.selectOptions(
+-    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
+-    &quot;MEAL&quot;,
+-  );
+-  const button = screen.getByRole(&quot;button&quot;, {
+-    name: &quot;Export to Google Calendar&quot;,
+-  });
+-  expect(
+-    button.compareDocumentPosition(
+-      screen.getByRole(&quot;group&quot;, { name: &quot;Schedule day&quot; }),
+-    ) &amp; Node.DOCUMENT_POSITION_FOLLOWING,
+-  ).toBeTruthy();
+-  expect(
+-    screen.queryByText(/Adds these events to your primary calendar/),
+-  ).not.toBeInTheDocument();
+-  expect(
+-    screen.queryByText(/Exports all .* across the weekend/),
+-  ).not.toBeInTheDocument();
+-  await waitFor(() =&gt; expect(button).toBeEnabled());
+-  await user.click(button);
+-  await waitFor(() =&gt;
+-    expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(&quot;3 added&quot;),
+-  );
+-  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
+-  await user.click(
+-    screen.getByRole(&quot;button&quot;, { name: &quot;Export to Google Calendar&quot; }),
+-  );
+-  await waitFor(() =&gt;
+-    expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(&quot;1 added&quot;),
+-  );
+-  const writes = fetch.mock.calls.filter(
+-    ([, options]) =&gt; options?.method === &quot;POST&quot;,
+-  );
+-  expect(writes).toHaveLength(4);
+-  expect(
+-    writes.slice(0, 3).map(([, options]) =&gt; JSON.parse(options.body).summary),
+-  ).toEqual([&quot;Dinner&quot;, &quot;Build a website&quot;, &quot;Tomorrow workshop&quot;]);
+-  expect(JSON.parse(writes[3][1].body).summary).toBe(&quot;Dinner&quot;);
+-  expect(
+-    screen.queryByRole(&quot;button&quot;, { name: /Download/ }),
+-  ).not.toBeInTheDocument();
+-  expect(
+-    [...document.querySelectorAll(&quot;.route-stop&quot;)].every(
+-      (node) =&gt; node.textContent.trim() === &quot;&quot;,
+-    ),
+-  ).toBe(true);
+-});
+diff --git a/src/schedule/testing/browsing/browsing.ui.test.jsx b/src/schedule/testing/browsing/browsing.ui.test.jsx
+new file mode 100644
+index 0000000..f18f3cc
+--- /dev/null
++++ b/src/schedule/testing/browsing/browsing.ui.test.jsx
+@@ -0,0 +1,44 @@
++import React from &quot;react&quot;;
++import { render, screen } from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;renders original navigation and filters live-shaped data; saved events survive remount&quot;, async () =&gt; {
++  const user = userEvent.setup();
++  const first = render(&lt;App /&gt;);
++  expect(
++    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
++  ).toBeInTheDocument();
++  expect(screen.getByRole(&quot;link&quot;, { name: &quot;Mentors&quot; })).toHaveAttribute(
++    &quot;href&quot;,
++    &quot;https://2021.hackillinois.org/mentors&quot;,
++  );
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
++  expect(
++    screen.queryByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
++  ).not.toBeInTheDocument();
++  first.unmount();
++  render(&lt;App /&gt;);
++  expect(
++    await screen.findByRole(&quot;button&quot;, { name: &quot;Unsave Dinner&quot; }),
++  ).toBeInTheDocument();
++  await user.selectOptions(
++    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
++    &quot;WORKSHOP&quot;,
++  );
++  expect(
++    screen.getByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
++  ).toBeInTheDocument();
++  expect(
++    screen.queryByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
++  ).not.toBeInTheDocument();
++  await user.type(
++    screen.getByRole(&quot;searchbox&quot;, { name: &quot;Search events&quot; }),
++    &quot;no matches&quot;,
++  );
++  expect(screen.getByText(&quot;No events match your filters.&quot;)).toBeInTheDocument();
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Clear filters&quot; }));
++  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
++});
+diff --git a/src/schedule/testing/browsing/details.ui.test.jsx b/src/schedule/testing/browsing/details.ui.test.jsx
+new file mode 100644
+index 0000000..125d482
+--- /dev/null
++++ b/src/schedule/testing/browsing/details.ui.test.jsx
+@@ -0,0 +1,82 @@
++import React from &quot;react&quot;;
++import { render, screen } from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;event details render API text without interpreting HTML&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [
++        {
++          ...events[0],
++          description: &quot;&lt;script&gt;bad()&lt;/script&gt; https://example.com/info&quot;,
++          mapImageUrl: &quot;javascript:bad()&quot;,
++        },
++      ],
++    }),
++  });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await user.click(await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }));
++  expect(screen.getByText(/&lt;script&gt;bad\(\)&lt;\/script&gt;/)).toBeInTheDocument();
++  expect(
++    screen.getByRole(&quot;link&quot;, { name: &quot;https://example.com/info&quot; }),
++  ).toHaveAttribute(&quot;href&quot;, &quot;https://example.com/info&quot;);
++  expect(
++    screen.queryByRole(&quot;link&quot;, { name: /View venue map/ }),
++  ).not.toBeInTheDocument();
++});
++
++test(&quot;location actions use each venue&#x27;s coordinates and stay outside the expandable details&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [
++        {
++          ...events[0],
++          locations: [
++            {
++              description: &quot;Siebel CS Lobby&quot;,
++              latitude: 40.113812,
++              longitude: -88.224937,
++            },
++            { description: &quot;Second venue&quot;, latitude: 40.1, longitude: -88.3 },
++          ],
++        },
++      ],
++    }),
++  });
++  render(&lt;App /&gt;);
++  const first = await screen.findByRole(&quot;link&quot;, {
++    name: &quot;Open location: Siebel CS Lobby&quot;,
++  });
++  expect(new URL(first.href).searchParams.get(&quot;query&quot;)).toBe(
++    &quot;40.113812,-88.224937&quot;,
++  );
++  expect(new URL(first.href).searchParams.get(&quot;api&quot;)).toBe(&quot;1&quot;);
++  expect(first.closest(&quot;details&quot;)).toBeNull();
++  expect(first).toHaveAttribute(&quot;target&quot;, &quot;_blank&quot;);
++  const second = screen.getByRole(&quot;link&quot;, {
++    name: &quot;Open location: Second venue&quot;,
++  });
++  expect(new URL(second.href).searchParams.get(&quot;query&quot;)).toBe(&quot;40.1,-88.3&quot;);
++});
++test(&quot;location links fall back to a name search and missing locations do not get a fake link&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [events[0], { ...events[1], locations: [] }],
++    }),
++  });
++  render(&lt;App /&gt;);
++  const link = await screen.findByRole(&quot;link&quot;, {
++    name: &quot;Open location: Dining room&quot;,
++  });
++  expect(new URL(link.href).searchParams.get(&quot;query&quot;)).toBe(&quot;Dining room&quot;);
++  expect(screen.getAllByRole(&quot;link&quot;, { name: /Open location:/ })).toHaveLength(
++    1,
++  );
++  expect(screen.getByText(&quot;Location to be announced&quot;)).toBeInTheDocument();
++});
+diff --git a/src/schedule/testing/browsing/loading.ui.test.jsx b/src/schedule/testing/browsing/loading.ui.test.jsx
+new file mode 100644
+index 0000000..d3c7db3
+--- /dev/null
++++ b/src/schedule/testing/browsing/loading.ui.test.jsx
+@@ -0,0 +1,66 @@
++import React from &quot;react&quot;;
++import { render, screen } from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { vi, test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;reports a failed request and retries successfully&quot;, async () =&gt; {
++  fetch.mockRejectedValueOnce(new Error(&quot;Network unavailable&quot;));
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  expect(await screen.findByRole(&quot;alert&quot;)).toHaveTextContent(
++    &quot;Could not load the schedule&quot;,
++  );
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Try again&quot; }));
++  expect(
++    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
++  ).toBeInTheDocument();
++});
++test(&quot;empty API data shows an honest empty state&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({ ok: true, json: async () =&gt; ({ events: [] }) });
++  render(&lt;App /&gt;);
++  expect(
++    await screen.findByText(&quot;No events have been published yet.&quot;),
++  ).toBeInTheDocument();
++  expect(
++    screen.queryByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
++  ).not.toBeInTheDocument();
++});
++test(&quot;malformed saved data does not prevent loading&quot;, async () =&gt; {
++  localStorage.setItem(&quot;hackillinois:saved-events&quot;, &quot;not json&quot;);
++  render(&lt;App /&gt;);
++  expect(
++    await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; }),
++  ).toBeInTheDocument();
++});
++test(&quot;a failed refresh keeps previously loaded events visible&quot;, async () =&gt; {
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  fetch.mockRejectedValueOnce(new Error(&quot;Offline&quot;));
++  await user.click(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Refresh&quot;, exact: true }),
++  );
++  expect(await screen.findByRole(&quot;alert&quot;)).toHaveTextContent(
++    &quot;Previously loaded events&quot;,
++  );
++  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
++});
++test(&quot;storage failure keeps the save action usable and explains its limit&quot;, async () =&gt; {
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  const blocked = vi
++    .spyOn(Storage.prototype, &quot;setItem&quot;)
++    .mockImplementation(() =&gt; {
++      throw new Error(&quot;Storage unavailable&quot;);
++    });
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  expect(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Unsave Dinner&quot; }),
++  ).toBeInTheDocument();
++  expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(
++    &quot;could not save your selections&quot;,
++  );
++  blocked.mockRestore();
++});
+diff --git a/src/schedule/testing/fixtures/schedule.js b/src/schedule/testing/fixtures/schedule.js
+new file mode 100644
+index 0000000..93ba28f
+--- /dev/null
++++ b/src/schedule/testing/fixtures/schedule.js
+@@ -0,0 +1,32 @@
++import { beforeEach, afterEach, vi } from &quot;vitest&quot;;
++export const events = [
++  {
++    eventId: &quot;meal&quot;,
++    name: &quot;Dinner&quot;,
++    description: &quot;Fresh food&quot;,
++    startTime: 1772233200,
++    endTime: 1772236800,
++    eventType: &quot;MEAL&quot;,
++    locations: [{ description: &quot;Dining room&quot; }],
++  },
++  {
++    eventId: &quot;code&quot;,
++    name: &quot;Build a website&quot;,
++    description: &quot;Learn React&quot;,
++    startTime: 1772236800,
++    endTime: 1772240400,
++    eventType: &quot;WORKSHOP&quot;,
++    locations: [{ description: &quot;Siebel&quot; }],
++  },
++];
++beforeEach(() =&gt; {
++  localStorage.clear();
++  vi.stubGlobal(
++    &quot;fetch&quot;,
++    vi.fn().mockResolvedValue({ ok: true, json: async () =&gt; ({ events }) }),
++  );
++});
++afterEach(() =&gt; {
++  vi.unstubAllGlobals();
++  vi.unstubAllEnvs();
++});
+diff --git a/src/schedule/testing/planning/export.ui.test.jsx b/src/schedule/testing/planning/export.ui.test.jsx
+new file mode 100644
+index 0000000..33c29d7
+--- /dev/null
++++ b/src/schedule/testing/planning/export.ui.test.jsx
+@@ -0,0 +1,84 @@
++import React from &quot;react&quot;;
++import { webcrypto } from &quot;node:crypto&quot;;
++import { render, screen, waitFor } from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { vi, test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;Google export includes the whole weekend regardless of filters, or only favorites&quot;, async () =&gt; {
++  const tomorrow = {
++    ...events[1],
++    eventId: &quot;tomorrow&quot;,
++    name: &quot;Tomorrow workshop&quot;,
++    startTime: events[1].startTime + 86400,
++    endTime: events[1].endTime + 86400,
++  };
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({ events: [...events, tomorrow] }),
++  });
++  fetch.mockResolvedValue({ ok: true, status: 200 });
++  vi.stubEnv(&quot;VITE_GOOGLE_CLIENT_ID&quot;, &quot;test.apps.googleusercontent.com&quot;);
++  vi.stubGlobal(&quot;crypto&quot;, webcrypto);
++  vi.stubGlobal(&quot;google&quot;, {
++    accounts: {
++      oauth2: {
++        hasGrantedAllScopes: () =&gt; true,
++        initTokenClient: (config) =&gt; ({
++          requestAccessToken: () =&gt;
++            config.callback({ access_token: &quot;temporary-test-token&quot; }),
++        }),
++      },
++    },
++  });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  await user.selectOptions(
++    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
++    &quot;MEAL&quot;,
++  );
++  const button = screen.getByRole(&quot;button&quot;, {
++    name: &quot;Export to Google Calendar&quot;,
++  });
++  expect(
++    button.compareDocumentPosition(
++      screen.getByRole(&quot;group&quot;, { name: &quot;Schedule day&quot; }),
++    ) &amp; Node.DOCUMENT_POSITION_FOLLOWING,
++  ).toBeTruthy();
++  expect(
++    screen.queryByText(/Adds these events to your primary calendar/),
++  ).not.toBeInTheDocument();
++  expect(
++    screen.queryByText(/Exports all .* across the weekend/),
++  ).not.toBeInTheDocument();
++  await waitFor(() =&gt; expect(button).toBeEnabled());
++  await user.click(button);
++  await waitFor(() =&gt;
++    expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(&quot;3 added&quot;),
++  );
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
++  await user.click(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Export to Google Calendar&quot; }),
++  );
++  await waitFor(() =&gt;
++    expect(screen.getByRole(&quot;status&quot;)).toHaveTextContent(&quot;1 added&quot;),
++  );
++  const writes = fetch.mock.calls.filter(
++    ([, options]) =&gt; options?.method === &quot;POST&quot;,
++  );
++  expect(writes).toHaveLength(4);
++  expect(
++    writes.slice(0, 3).map(([, options]) =&gt; JSON.parse(options.body).summary),
++  ).toEqual([&quot;Dinner&quot;, &quot;Build a website&quot;, &quot;Tomorrow workshop&quot;]);
++  expect(JSON.parse(writes[3][1].body).summary).toBe(&quot;Dinner&quot;);
++  expect(
++    screen.queryByRole(&quot;button&quot;, { name: /Download/ }),
++  ).not.toBeInTheDocument();
++  expect(
++    [...document.querySelectorAll(&quot;.route-stop&quot;)].every(
++      (node) =&gt; node.textContent.trim() === &quot;&quot;,
++    ),
++  ).toBe(true);
++});
+diff --git a/src/schedule/testing/planning/planning.ui.test.jsx b/src/schedule/testing/planning/planning.ui.test.jsx
+new file mode 100644
+index 0000000..48b89bf
+--- /dev/null
++++ b/src/schedule/testing/planning/planning.ui.test.jsx
+@@ -0,0 +1,68 @@
++import React from &quot;react&quot;;
++import { render, screen } from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;My schedule shows all starred days and explains an empty plan&quot;, async () =&gt; {
++  const tomorrow = {
++    ...events[1],
++    eventId: &quot;tomorrow&quot;,
++    name: &quot;Tomorrow workshop&quot;,
++    startTime: events[1].startTime + 86400,
++    endTime: events[1].endTime + 86400,
++  };
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({ events: [...events, tomorrow] }),
++  });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
++  expect(
++    screen.getByText(&quot;Star events to start building your schedule.&quot;),
++  ).toBeInTheDocument();
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;All events&quot; }));
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  await user.click(screen.getByRole(&quot;radio&quot;, { name: /Saturday/ }));
++  await user.click(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Save Tomorrow workshop&quot; }),
++  );
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;My schedule&quot; }));
++  expect(screen.getByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; })).toBeInTheDocument();
++  expect(
++    screen.getByRole(&quot;heading&quot;, { name: &quot;Tomorrow workshop&quot; }),
++  ).toBeInTheDocument();
++  expect(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Export to Google Calendar&quot; }),
++  ).toBeInTheDocument();
++});
++test(&quot;a hidden saved event still produces a named conflict warning&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [
++        events[0],
++        { ...events[1], startTime: events[0].startTime + 60 },
++      ],
++    }),
++  });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  await user.click(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Save Build a website&quot; }),
++  );
++  await user.selectOptions(
++    screen.getByRole(&quot;combobox&quot;, { name: &quot;Event type&quot; }),
++    &quot;MEAL&quot;,
++  );
++  expect(
++    screen.queryByRole(&quot;heading&quot;, { name: &quot;Build a website&quot; }),
++  ).not.toBeInTheDocument();
++  expect(screen.getByText(/Conflict with Build a website/)).toHaveTextContent(
++    &quot;Conflict with Build a website from 5:01 PM to 6:00 PM · Feb 27&quot;,
++  );
++});
+diff --git a/src/schedule/testing/planning/route.ui.test.jsx b/src/schedule/testing/planning/route.ui.test.jsx
+new file mode 100644
+index 0000000..1ee613e
+--- /dev/null
++++ b/src/schedule/testing/planning/route.ui.test.jsx
+@@ -0,0 +1,129 @@
++import React from &quot;react&quot;;
++import {
++  render,
++  screen,
++  fireEvent,
++  waitFor,
++  act,
++} from &quot;@testing-library/react&quot;;
++import userEvent from &quot;@testing-library/user-event&quot;;
++import { vi, test, expect } from &quot;vitest&quot;;
++import App from &quot;../../../App.jsx&quot;;
++import { events } from &quot;../fixtures/schedule.js&quot;;
++test(&quot;scroll moves the route boat and choosing a stop opens that event&quot;, async () =&gt; {
++  const geometry = vi
++    .spyOn(HTMLElement.prototype, &quot;getBoundingClientRect&quot;)
++    .mockReturnValue({ top: 500 });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  const first = screen.getByRole(&quot;button&quot;, { name: &quot;Go to Dinner&quot; });
++  const second = screen.getByRole(&quot;button&quot;, { name: &quot;Go to Build a website&quot; });
++  expect(first).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;);
++  expect(first.closest(&#x27;section[aria-label=&quot;Schedule events&quot;]&#x27;)).not.toBeNull();
++  expect(
++    screen.queryByRole(&quot;button&quot;, { name: /Open route/ }),
++  ).not.toBeInTheDocument();
++  expect(screen.getAllByText(&quot;Dinner&quot;, { exact: true })).toHaveLength(1);
++  geometry.mockRestore();
++  const cards = document.querySelectorAll(&quot;article.event&quot;);
++  vi.spyOn(cards[0], &quot;getBoundingClientRect&quot;).mockReturnValue({ top: -300 });
++  vi.spyOn(cards[1], &quot;getBoundingClientRect&quot;).mockReturnValue({ top: 150 });
++  fireEvent.scroll(window);
++  await waitFor(() =&gt; expect(second).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;));
++  const scroll = vi.fn();
++  cards[0].scrollIntoView = scroll;
++  await user.click(first);
++  expect(scroll).toHaveBeenCalled();
++  expect(cards[0].querySelector(&quot;details&quot;)).toHaveAttribute(&quot;open&quot;);
++  await user.type(screen.getByRole(&quot;searchbox&quot;), &quot;nothing matches&quot;);
++  expect(
++    screen.queryByRole(&quot;navigation&quot;, { name: &quot;Event route&quot; }),
++  ).not.toBeInTheDocument();
++});
++
++test(&quot;saved overlaps are labeled and changing days replaces route stops&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [
++        events[0],
++        { ...events[1], startTime: events[0].startTime + 60 },
++        {
++          ...events[0],
++          eventId: &quot;next&quot;,
++          name: &quot;Next day meal&quot;,
++          startTime: events[0].startTime + 86400,
++          endTime: events[0].endTime + 86400,
++        },
++      ],
++    }),
++  });
++  const user = userEvent.setup();
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Dinner&quot; });
++  await user.click(screen.getByRole(&quot;button&quot;, { name: &quot;Save Dinner&quot; }));
++  await user.click(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Save Build a website&quot; }),
++  );
++  expect(screen.getAllByText(&quot;Overlaps a saved event&quot;)).toHaveLength(2);
++  await user.click(screen.getByRole(&quot;radio&quot;, { name: /Saturday/ }));
++  expect(
++    screen.getByRole(&quot;button&quot;, { name: &quot;Go to Next day meal&quot; }),
++  ).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;);
++  expect(
++    screen.queryByRole(&quot;button&quot;, { name: &quot;Go to Dinner&quot; }),
++  ).not.toBeInTheDocument();
++});
++
++test(&quot;the final scroll pixels do not teleport the boat past the penultimate event&quot;, async () =&gt; {
++  fetch.mockResolvedValueOnce({
++    ok: true,
++    json: async () =&gt; ({
++      events: [
++        ...events,
++        {
++          ...events[1],
++          eventId: &quot;last&quot;,
++          name: &quot;Last event&quot;,
++          startTime: events[1].startTime + 3600,
++          endTime: events[1].endTime + 3600,
++        },
++      ],
++    }),
++  });
++  render(&lt;App /&gt;);
++  await screen.findByRole(&quot;heading&quot;, { name: &quot;Last event&quot; });
++  vi.stubGlobal(&quot;innerHeight&quot;, 600);
++  vi.stubGlobal(&quot;scrollY&quot;, 797);
++  const height = vi
++    .spyOn(document.documentElement, &quot;scrollHeight&quot;, &quot;get&quot;)
++    .mockReturnValue(1400);
++  document.querySelectorAll(&quot;article.event&quot;).forEach((card, index) =&gt; {
++    Object.defineProperty(card, &quot;offsetTop&quot;, {
++      configurable: true,
++      value: index * 300,
++    });
++    vi.spyOn(card, &quot;getBoundingClientRect&quot;).mockImplementation(() =&gt; ({
++      top: 400 + index * 300 - window.scrollY,
++    }));
++  });
++  fireEvent.scroll(window);
++  const boat = document.querySelector(&quot;.sailing-boat&quot;);
++  await waitFor(() =&gt; expect(parseFloat(boat.style.top)).toBeGreaterThan(300));
++  const before = parseFloat(boat.style.top);
++  vi.stubGlobal(&quot;scrollY&quot;, 798);
++  fireEvent.scroll(window);
++  await act(async () =&gt; {
++    await new Promise((resolve) =&gt; requestAnimationFrame(resolve));
++  });
++  expect(Math.abs(parseFloat(boat.style.top) - before)).toBeLessThan(10);
++  vi.stubGlobal(&quot;scrollY&quot;, 800);
++  fireEvent.scroll(window);
++  await waitFor(() =&gt;
++    expect(
++      screen.getByRole(&quot;button&quot;, { name: &quot;Go to Last event&quot; }),
++    ).toHaveAttribute(&quot;aria-current&quot;, &quot;step&quot;),
++  );
++  height.mockRestore();
++});
+diff --git a/src/schedule/view/EventCard.jsx b/src/schedule/view/EventCard.jsx
+index b4ba660..4b929f1 100644
+--- a/src/schedule/view/EventCard.jsx
++++ b/src/schedule/view/EventCard.jsx
+@@ -1,36 +1,7 @@
++import EventDescription from &quot;./details/EventDescription.jsx&quot;;
++import EventLocations from &quot;./details/EventLocations.jsx&quot;;
+ import React from &quot;react&quot;;
+ import { dayKey, formatDay, formatTime, typeLabel } from &quot;../data/events.js&quot;;
+-function safeUrl(value) {
+-  try {
+-    const url = new URL(value);
+-    return [&quot;https:&quot;, &quot;http:&quot;].includes(url.protocol) ? url.href : null;
+-  } catch {
+-    return null;
+-  }
+-}
+-function locationUrl(location) {
+-  const hasCoordinates =
+-    Number.isFinite(location.latitude) &amp;&amp;
+-    Math.abs(location.latitude) &lt;= 90 &amp;&amp;
+-    Number.isFinite(location.longitude) &amp;&amp;
+-    Math.abs(location.longitude) &lt;= 180;
+-  const query = hasCoordinates
+-    ? `${location.latitude},${location.longitude}`
+-    : location.description;
+-  return `https://www.google.com/maps/search/?${new URLSearchParams({ api: &quot;1&quot;, query })}`;
+-}
+-function Description({ text }) {
+-  return text.split(/(https?:\/\/[^\s&lt;&gt;]+)/g).map((part, index) =&gt; {
+-    const url = safeUrl(part);
+-    return url ? (
+-      &lt;a key={index} href={url} target=&quot;_blank&quot; rel=&quot;noreferrer&quot;&gt;
+-        {part}
+-      &lt;/a&gt;
+-    ) : (
+-      part
+-    );
+-  });
+-}
+ export default function EventCard({
+   event,
+   saved,
+@@ -38,7 +9,6 @@ export default function EventCard({
+   now,
+   conflicts = [],
+ }) {
+-  const map = safeUrl(event.mapImageUrl);
+   const ongoing = now &gt;= event.startTime * 1000 &amp;&amp; now &lt; event.endTime * 1000;
+   return (
+     &lt;article className=&quot;event&quot; id={`event-${event.eventId}`}&gt;
+@@ -91,26 +61,7 @@ export default function EventCard({
+               /&gt;
+             &lt;/svg&gt;
+           &lt;/summary&gt;
+-          &lt;div className=&quot;description&quot;&gt;
+-            &lt;p&gt;
+-              &lt;Description
+-                text={
+-                  event.description ||
+-                  &quot;No additional details have been published.&quot;
+-                }
+-              /&gt;
+-            &lt;/p&gt;
+-            {event.sponsor &amp;&amp; &lt;p&gt;Hosted by {event.sponsor}&lt;/p&gt;}
+-            {event.points &gt; 0 &amp;&amp; &lt;p&gt;{event.points} points&lt;/p&gt;}
+-            {event.menu?.length &gt; 0 &amp;&amp; &lt;p&gt;Menu: {event.menu.join(&quot;, &quot;)}&lt;/p&gt;}
+-            &lt;div className=&quot;event-links&quot;&gt;
+-              {map &amp;&amp; (
+-                &lt;a href={map} target=&quot;_blank&quot; rel=&quot;noreferrer&quot;&gt;
+-                  View venue map ↗
+-                &lt;/a&gt;
+-              )}
+-            &lt;/div&gt;
+-          &lt;/div&gt;
++          &lt;EventDescription event={event} /&gt;
+         &lt;/details&gt;
+         {conflicts.map((other) =&gt; {
+           const overlapStart = Math.max(event.startTime, other.startTime);
+@@ -126,26 +77,7 @@ export default function EventCard({
+             &lt;/p&gt;
+           );
+         })}
+-        &lt;div className=&quot;locations&quot;&gt;
+-          {event.locations.length ? (
+-            event.locations.map((location, index) =&gt; (
+-              &lt;p className=&quot;location&quot; key={`${location.description}-${index}`}&gt;
+-                &lt;span&gt;{location.description}&lt;/span&gt;
+-                &lt;a
+-                  className=&quot;open-location&quot;
+-                  href={locationUrl(location)}
+-                  target=&quot;_blank&quot;
+-                  rel=&quot;noreferrer&quot;
+-                  aria-label={`Open location: ${location.description}`}
+-                &gt;
+-                  Open location &lt;span aria-hidden=&quot;true&quot;&gt;↗&lt;/span&gt;
+-                &lt;/a&gt;
+-              &lt;/p&gt;
+-            ))
+-          ) : (
+-            &lt;p className=&quot;location&quot;&gt;Location to be announced&lt;/p&gt;
+-          )}
+-        &lt;/div&gt;
++        &lt;EventLocations event={event} /&gt;
+       &lt;/div&gt;
+       &lt;button
+         className=&quot;save&quot;
+diff --git a/src/schedule/view/details/EventDescription.jsx b/src/schedule/view/details/EventDescription.jsx
+new file mode 100644
+index 0000000..2497de8
+--- /dev/null
++++ b/src/schedule/view/details/EventDescription.jsx
+@@ -0,0 +1,45 @@
++import React from &quot;react&quot;;
++function safeUrl(value) {
++  try {
++    const url = new URL(value);
++    return [&quot;https:&quot;, &quot;http:&quot;].includes(url.protocol) ? url.href : null;
++  } catch {
++    return null;
++  }
++}
++function Description({ text }) {
++  return text.split(/(https?:\/\/[^\s&lt;&gt;]+)/g).map((part, index) =&gt; {
++    const url = safeUrl(part);
++    return url ? (
++      &lt;a key={index} href={url} target=&quot;_blank&quot; rel=&quot;noreferrer&quot;&gt;
++        {part}
++      &lt;/a&gt;
++    ) : (
++      part
++    );
++  });
++}
++export default function EventDescription({ event }) {
++  const map = safeUrl(event.mapImageUrl);
++  return (
++    &lt;div className=&quot;description&quot;&gt;
++      &lt;p&gt;
++        &lt;Description
++          text={
++            event.description || &quot;No additional details have been published.&quot;
++          }
++        /&gt;
++      &lt;/p&gt;
++      {event.sponsor &amp;&amp; &lt;p&gt;Hosted by {event.sponsor}&lt;/p&gt;}
++      {event.points &gt; 0 &amp;&amp; &lt;p&gt;{event.points} points&lt;/p&gt;}
++      {event.menu?.length &gt; 0 &amp;&amp; &lt;p&gt;Menu: {event.menu.join(&quot;, &quot;)}&lt;/p&gt;}
++      &lt;div className=&quot;event-links&quot;&gt;
++        {map &amp;&amp; (
++          &lt;a href={map} target=&quot;_blank&quot; rel=&quot;noreferrer&quot;&gt;
++            View venue map ↗
++          &lt;/a&gt;
++        )}
++      &lt;/div&gt;
++    &lt;/div&gt;
++  );
++}
+diff --git a/src/schedule/view/details/EventLocations.jsx b/src/schedule/view/details/EventLocations.jsx
+new file mode 100644
+index 0000000..82ad9db
+--- /dev/null
++++ b/src/schedule/view/details/EventLocations.jsx
+@@ -0,0 +1,36 @@
++import React from &quot;react&quot;;
++function locationUrl(location) {
++  const hasCoordinates =
++    Number.isFinite(location.latitude) &amp;&amp;
++    Math.abs(location.latitude) &lt;= 90 &amp;&amp;
++    Number.isFinite(location.longitude) &amp;&amp;
++    Math.abs(location.longitude) &lt;= 180;
++  const query = hasCoordinates
++    ? `${location.latitude},${location.longitude}`
++    : location.description;
++  return `https://www.google.com/maps/search/?${new URLSearchParams({ api: &quot;1&quot;, query })}`;
++}
++export default function EventLocations({ event }) {
++  return (
++    &lt;div className=&quot;locations&quot;&gt;
++      {event.locations.length ? (
++        event.locations.map((location, index) =&gt; (
++          &lt;p className=&quot;location&quot; key={`${location.description}-${index}`}&gt;
++            &lt;span&gt;{location.description}&lt;/span&gt;
++            &lt;a
++              className=&quot;open-location&quot;
++              href={locationUrl(location)}
++              target=&quot;_blank&quot;
++              rel=&quot;noreferrer&quot;
++              aria-label={`Open location: ${location.description}`}
++            &gt;
++              Open location &lt;span aria-hidden=&quot;true&quot;&gt;↗&lt;/span&gt;
++            &lt;/a&gt;
++          &lt;/p&gt;
++        ))
++      ) : (
++        &lt;p className=&quot;location&quot;&gt;Location to be announced&lt;/p&gt;
++      )}
++    &lt;/div&gt;
++  );
++}
+diff --git a/src/schedule/view/schedule.css b/src/schedule/view/schedule.css
+index d03f794..37b5545 100644
+--- a/src/schedule/view/schedule.css
++++ b/src/schedule/view/schedule.css
+@@ -1,721 +1,9 @@
+ @import &quot;./paper.css&quot;;
+-:root {
+-  font-family: &quot;Caveat Variable&quot;, cursive;
+-  font-size: 19px;
+-  font-weight: 500;
+-  color: #38484a;
+-  background: #071725;
+-  font-synthesis: none;
+-  --hand: &quot;Caveat Variable&quot;, cursive;
+-  --ink: #344e52;
+-  --paper: #f3f0df;
+-  color-scheme: light;
+-}
+-* {
+-  box-sizing: border-box;
+-}
+-body {
+-  margin: 0;
+-}
+-button,
+-input,
+-select {
+-  font: inherit;
+-  color: inherit;
+-}
+-button,
+-a,
+-input,
+-select,
+-summary {
+-  touch-action: manipulation;
+-}
+-button {
+-  cursor: pointer;
+-}
+-a {
+-  color: inherit;
+-}
+-button:disabled {
+-  cursor: wait;
+-  opacity: 0.6;
+-}
+-h1,
+-h2,
+-p {
+-  margin: 0;
+-}
+-button,
+-input,
+-select {
+-  border-radius: 3px;
+-}
+-button {
+-  background: transparent;
+-}
+-a:focus-visible,
+-button:focus-visible,
+-input:focus-visible,
+-select:focus-visible,
+-summary:focus-visible {
+-  outline: 2px dashed #ad5034;
+-  outline-offset: 5px;
+-}
+-.skip-link {
+-  position: fixed;
+-  top: -80px;
+-  left: 12px;
+-  z-index: 20;
+-  background: var(--paper);
+-  padding: 12px;
+-}
+-.skip-link:focus {
+-  top: 12px;
+-}
+-.masthead {
+-  min-height: 82px;
+-  max-width: 1120px;
+-  margin: auto;
+-  padding: 12px 35px;
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  position: relative;
+-  z-index: 4;
+-  color: var(--paper);
+-  gap: 20px;
+-}
+-.logo {
+-  display: block;
+-  width: 149px;
+-  height: 49px;
+-}
+-.navigation {
+-  display: flex;
+-  gap: 30px;
+-  align-items: center;
+-  font: 600 23px/1.4 var(--hand);
+-}
+-.navigation a {
+-  text-decoration: none;
+-  padding: 10px 0;
+-}
+-.navigation a:hover {
+-  color: #e4b891;
+-}
+-.navigation a[aria-current] {
+-  text-decoration: underline;
+-  text-decoration-color: #d2a580;
+-  text-underline-offset: 9px;
+-  text-decoration-thickness: 2px;
+-}
+-.menu-toggle {
+-  display: none;
+-}
+-.page {
+-  position: relative;
+-  z-index: 2;
+-  width: min(920px, calc(100% - 150px));
+-  margin: 15px auto 85px;
+-  padding: 40px 80px 45px;
+-  background: var(--paper);
+-  isolation: isolate;
+-  box-shadow:
+-    0 16px 30px #00152388,
+-    2px 3px 2px #00152355;
+-  transform: rotate(-0.25deg);
+-  border-radius: 2px 4px 1px 3px;
+-  min-height: 400px;
+-}
+-.title-row {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  gap: 20px;
+-}
+-h1 {
+-  font: 400 69px/1.1 var(--hand);
+-  letter-spacing: -0.055em;
+-  color: #34484e;
+-}
+-.pause {
+-  display: flex;
+-  gap: 7px;
+-  align-items: center;
+-  font-size: 16px;
+-  white-space: nowrap;
+-  cursor: pointer;
+-  min-height: 44px;
+-}
+-.pause input {
+-  accent-color: #456a70;
+-}
+-.edition {
+-  font-size: 17px;
+-  color: #5b706d;
+-  margin-top: 8px;
+-  margin-bottom: 22px;
+-}
+-.days-scroll {
+-  overflow-x: auto;
+-  padding: 12px 4px 6px;
+-  margin: 0 -4px;
+-}
+-.days {
+-  position: relative;
+-  display: grid;
+-  grid-template-columns: repeat(var(--day-count), minmax(100px, 1fr));
+-  min-width: calc(var(--day-count) * 100px);
+-  padding-top: 4px;
+-  margin-bottom: 18px;
+-}
+-.day {
+-  position: relative;
+-  display: flex;
+-  flex-direction: column;
+-  align-items: center;
+-  cursor: pointer;
+-  padding: 8px 5px;
+-  color: #657874;
+-  gap: 3px;
+-}
+-.day input {
+-  position: absolute;
+-  opacity: 0;
+-  inset: 0;
+-  width: 100%;
+-  height: 100%;
+-  cursor: pointer;
+-  margin: 0;
+-}
+-.day:has(input:focus-visible) {
+-  outline: 2px dashed #ad5034;
+-  outline-offset: 3px;
+-}
+-.day-name {
+-  font: 400 26px/1.2 var(--hand);
+-  letter-spacing: -0.035em;
+-}
+-.day-date {
+-  font-size: 16px;
+-}
+-.day.active {
+-  color: #244957;
+-}
+-.day.active:after {
+-  content: &quot;&quot;;
+-  position: absolute;
+-  left: 25%;
+-  right: 25%;
+-  bottom: 0;
+-  height: 3px;
+-  background: #b879595e;
+-  transform: rotate(-2deg);
+-}
+-.toolbar {
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  gap: 12px;
+-  padding: 10px 0;
+-  border-top: 1px solid #71807b55;
+-  border-bottom: 1px solid #71807b88;
+-}
+-.select-wrap {
+-  position: relative;
+-}
+-.select-wrap select,
+-.saved-filter {
+-  font: 600 21px/1.4 var(--hand);
+-  color: var(--ink);
+-}
+-.select-wrap select {
+-  appearance: none;
+-  width: 200px;
+-  background: transparent;
+-  border: 0;
+-  padding: 8px 27px 8px 0;
+-  cursor: pointer;
+-}
+-.select-wrap:after {
+-  content: &quot;&quot;;
+-  position: absolute;
+-  right: 10px;
+-  top: 16px;
+-  width: 9px;
+-  height: 9px;
+-  border-right: 2px solid currentColor;
+-  border-bottom: 2px solid currentColor;
+-  transform: rotate(42deg);
+-  pointer-events: none;
+-}
+-.saved-filter {
+-  display: flex;
+-  align-items: center;
+-  gap: 10px;
+-  min-height: 44px;
+-  cursor: pointer;
+-  white-space: nowrap;
+-}
+-.saved-filter input {
+-  appearance: none;
+-  position: relative;
+-  flex: none;
+-  width: 21px;
+-  height: 21px;
+-  margin: 0;
+-  border: 2px solid #698080;
+-  border-radius: 3px 5px 2px 4px;
+-  transform: rotate(-4deg);
+-  background: transparent;
+-  cursor: pointer;
+-}
+-.saved-filter input:checked:after {
+-  content: &quot;&quot;;
+-  position: absolute;
+-  left: 5px;
+-  top: 0;
+-  width: 7px;
+-  height: 13px;
+-  border-right: 2px solid #244957;
+-  border-bottom: 2px solid #244957;
+-  transform: rotate(40deg);
+-}
+-.search-row {
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  gap: 16px;
+-  margin-top: 12px;
+-}
+-.search-row input {
+-  background: transparent;
+-  border: 0;
+-  border-bottom: 1px solid #71807b66;
+-  padding: 8px 0;
+-  max-width: 300px;
+-  width: 55%;
+-  font: 400 19px/1.4 var(--hand);
+-}
+-.search-row input::placeholder {
+-  color: #637b77;
+-  opacity: 1;
+-}
+-.day-heading {
+-  display: flex;
+-  justify-content: space-between;
+-  gap: 12px;
+-  align-items: baseline;
+-  padding: 25px 0 5px;
+-}
+-.day-heading h2 {
+-  font: 400 21px/1.3 var(--hand);
+-}
+-.day-heading &gt; span {
+-  font-size: 16px;
+-  color: #526967;
+-}
+-.event {
+-  display: grid;
+-  grid-template-columns: 86px minmax(0, 1fr) 38px;
+-  gap: 14px;
+-  position: relative;
+-  align-items: start;
+-  padding: 25px 0;
+-  border-bottom: 1px solid #6e858044;
+-}
+-.event:hover,
+-.event:focus-within {
+-  background: #c5d6cc80;
+-  box-shadow:
+-    -8px 0 0 #c5d6cc80,
+-    8px 0 0 #c5d6cc80,
+-    inset 3px 0 #698b7a;
+-}
+-.event {
+-  transition:
+-    background-color 0.18s ease,
+-    box-shadow 0.18s ease;
+-}
+-
+-.time {
+-  padding-top: 23px;
+-  white-space: nowrap;
+-  font: 600 21px/1.4 var(--hand);
+-  letter-spacing: -0.025em;
+-  color: #30474b;
+-  font-variant-numeric: tabular-nums;
+-}
+-.time &gt; time {
+-  font-size: 21px;
+-  font-weight: 700;
+-  color: #263f40;
+-}
+-.time p {
+-  font: 500 16px/1.5 var(--hand);
+-  letter-spacing: 0;
+-  color: #52676a;
+-  margin-top: 3px;
+-}
+-.next-day {
+-  display: block;
+-  font: 15px var(--hand);
+-}
+-.kind {
+-  font-size: 14px;
+-  text-transform: uppercase;
+-  letter-spacing: 0.1em;
+-  color: #536c65;
+-  opacity: 0.85;
+-  font-weight: 500;
+-  display: flex;
+-  align-items: center;
+-  gap: 6px;
+-  margin-bottom: 7px;
+-  flex-wrap: wrap;
+-}
+-.kind:before {
+-  content: &quot;&quot;;
+-  width: 6px;
+-  height: 6px;
+-  border-radius: 50%;
+-  background: #c3824e;
+-}
+-.kind-workshop:before {
+-  background: #447887;
+-}
+-.kind-minievent:before {
+-  background: #93728f;
+-}
+-.kind-meal:before {
+-  background: #6c835b;
+-}
+-.live {
+-  color: #2d674b;
+-  font-weight: 700;
+-}
+-.event summary {
+-  list-style: none;
+-  cursor: pointer;
+-  display: flex;
+-  align-items: baseline;
+-  justify-content: space-between;
+-  gap: 12px;
+-}
+-.event summary::-webkit-details-marker {
+-  display: none;
+-}
+-.event h2 {
+-  font: 700 30px/1.16 var(--hand);
+-  letter-spacing: -0.025em;
+-  color: #263f40;
+-  overflow-wrap: anywhere;
+-}
+-.arrow {
+-  width: 26px;
+-  height: 31px;
+-  color: #607c70;
+-  transition: transform 0.2s;
+-  flex: none;
+-  align-self: center;
+-}
+-.event details[open] .arrow {
+-  transform: rotate(180deg);
+-}
+-.locations {
+-  margin-top: 9px;
+-}
+-.location {
+-  display: flex;
+-  align-items: baseline;
+-  flex-wrap: wrap;
+-  column-gap: 12px;
+-  row-gap: 2px;
+-  font-size: 19px;
+-  line-height: 1.45;
+-  color: #4e685f;
+-  margin-top: 3px;
+-}
+-.location &gt; span {
+-  font-weight: 500;
+-}
+-.open-location {
+-  display: inline-flex;
+-  gap: 5px;
+-  align-items: baseline;
+-  min-height: 32px;
+-  padding: 3px 0;
+-  color: #31584c;
+-  font-size: 16px;
+-  font-weight: 600;
+-  text-decoration: underline;
+-  text-decoration-style: dashed;
+-  text-underline-offset: 4px;
+-  white-space: nowrap;
+-}
+-.open-location:hover {
+-  color: #172f27;
+-  text-decoration-style: solid;
+-}
+-.description {
+-  font-size: 18px;
+-  line-height: 1.65;
+-  color: #405d52;
+-  margin: 14px 0;
+-  overflow-wrap: anywhere;
+-}
+-.description p {
+-  white-space: pre-wrap;
+-  margin: 8px 0;
+-}
+-.event-links {
+-  display: flex;
+-  gap: 15px;
+-  flex-wrap: wrap;
+-  margin-top: 15px;
+-}
+-.event-links button {
+-  border: 0;
+-  padding: 0;
+-  text-decoration: underline;
+-}
+-.save {
+-  margin-top: 16px;
+-  border: 0;
+-  min-width: 38px;
+-  min-height: 44px;
+-  padding: 0;
+-  color: #657e77;
+-  font: 32px/1 var(--hand);
+-}
+-.save[aria-pressed=&quot;true&quot;] {
+-  color: #9c6246;
+-}
+-.notice {
+-  padding: 30px 0;
+-  font-size: 15px;
+-  line-height: 1.6;
+-}
+-.notice button {
+-  margin-top: 12px;
+-  border: 1px solid #657e77;
+-  padding: 8px 16px;
+-  font: 600 20px/1.3 var(--hand);
+-}
+-.error {
+-  color: #813f2c;
+-}
+-.schedule-footer {
+-  font-size: 16px;
+-  line-height: 1.7;
+-  color: #526b65;
+-  padding-top: 28px;
+-}
+-.schedule-footer button {
+-  border: 0;
+-  padding: 0;
+-  text-decoration: underline;
+-}
+-.archive-note {
+-  margin-top: 7px;
+-}
+-@media (max-width: 1000px) {
+-  .page {
+-    width: calc(100% - 110px);
+-    padding: 36px 76px 45px;
+-  }
+-  .masthead {
+-    padding: 12px 50px;
+-  }
+-  .navigation {
+-    gap: 22px;
+-    font-size: 21px;
+-  }
+-}
+-@media (max-width: 650px) {
+-  .masthead {
+-    min-height: 70px;
+-    padding: 10px 22px;
+-    flex-wrap: wrap;
+-    gap: 0;
+-  }
+-  .logo {
+-    width: 121px;
+-    height: 40px;
+-  }
+-  .menu-toggle {
+-    display: block;
+-    font: 600 21px var(--hand);
+-    color: var(--paper);
+-    border: 1px solid #b7c7c4;
+-    padding: 8px 14px;
+-  }
+-  .navigation {
+-    display: none;
+-    width: 100%;
+-    padding-top: 10px;
+-    justify-content: space-between;
+-    gap: 10px;
+-    background: #071725;
+-  }
+-  .navigation.open {
+-    display: flex;
+-  }
+-  .navigation a {
+-    font-size: 19px;
+-  }
+-  .page {
+-    width: calc(100% - 38px);
+-    margin: 9px 19px 50px;
+-    padding: 25px 24px 36px 54px;
+-    transform: none;
+-  }
+-  h1 {
+-    font-size: 49px;
+-  }
+-  .pause {
+-    font-size: 15px;
+-  }
+-  .title-row {
+-    gap: 8px;
+-  }
+-  .edition {
+-    font-size: 16px;
+-    margin-bottom: 14px;
+-  }
+-  .day-name {
+-    font-size: 21px;
+-  }
+-  .day-date {
+-    font-size: 15px;
+-  }
+-  .days {
+-    grid-template-columns: repeat(var(--day-count), minmax(88px, 1fr));
+-    min-width: calc(var(--day-count) * 88px);
+-  }
+-  .select-wrap select,
+-  .saved-filter {
+-    font-size: 16px;
+-  }
+-  .select-wrap select {
+-    width: 145px;
+-  }
+-  .saved-filter {
+-    gap: 7px;
+-  }
+-  .saved-filter input {
+-    width: 18px;
+-    height: 18px;
+-  }
+-  .saved-filter input:checked:after {
+-    left: 4px;
+-    width: 6px;
+-    height: 11px;
+-  }
+-  .select-wrap:after {
+-    top: 13px;
+-    right: 7px;
+-    width: 7px;
+-    height: 7px;
+-  }
+-  .search-row {
+-    flex-wrap: wrap;
+-    gap: 6px;
+-  }
+-  .search-row input {
+-    font-size: 17px;
+-    width: 100%;
+-    max-width: none;
+-  }
+-  .event {
+-    grid-template-columns: 68px minmax(0, 1fr) 30px;
+-    gap: 8px;
+-    padding: 23px 0;
+-  }
+-  .time &gt; time {
+-    font-size: 18px;
+-  }
+-  .time p {
+-    font-size: 18px;
+-  }
+-  .event h2 {
+-    font-size: 26px;
+-  }
+-  .location {
+-    font-size: 16px;
+-  }
+-  .save {
+-    font-size: 28px;
+-    min-width: 30px;
+-  }
+-  .day-heading h2 {
+-    font-size: 19px;
+-  }
+-  .description {
+-    font-size: 17px;
+-  }
+-}
+-@media (max-width: 360px) {
+-  .toolbar {
+-    flex-wrap: wrap;
+-    gap: 0;
+-  }
+-  .title-row {
+-    flex-wrap: wrap;
+-  }
+-  .pause {
+-    min-height: 30px;
+-  }
+-  .event {
+-    grid-template-columns: 62px minmax(0, 1fr) 26px;
+-  }
+-  .time &gt; time {
+-    font-size: 15px;
+-  }
+-}
+-@media (prefers-reduced-motion: reduce) {
+-  .arrow,
+-  .event {
+-    transition: none;
+-  }
+-}
+-@media print {
+-  .ocean,
+-  .masthead,
+-  .toolbar,
+-  .search-row,
+-  .save,
+-  .pause,
+-  .schedule-footer,
+-  .days-scroll {
+-    display: none;
+-  }
+-  .page {
+-    width: 100%;
+-    margin: 0;
+-    padding: 15px;
+-    transform: none;
+-    box-shadow: none;
+-  }
+-  .page:before {
+-    display: none;
+-  }
+-  .event {
+-    break-inside: avoid;
+-  }
+-}
+-
+-/* Keep secondary guidance quiet without fading event names or actionable links. */
+-.edition,
+-.day-date,
+-.day-heading &gt; span,
+-.schedule-footer {
+-  color: #617369;
+-  font-weight: 400;
+-}
+-.day-heading h2 {
+-  font-weight: 600;
+-}
+-h1 {
+-  font-weight: 600;
+-}
++@import &quot;./styles/foundation/base.css&quot;;
++@import &quot;./styles/foundation/header.css&quot;;
++@import &quot;./styles/controls.css&quot;;
++@import &quot;./styles/event-row.css&quot;;
++@import &quot;./styles/details.css&quot;;
++@import &quot;./styles/responsive/tablet.css&quot;;
++@import &quot;./styles/responsive/mobile.css&quot;;
++@import &quot;./styles/responsive/accessibility.css&quot;;
+diff --git a/src/schedule/view/styles/controls.css b/src/schedule/view/styles/controls.css
+new file mode 100644
+index 0000000..31544e9
+--- /dev/null
++++ b/src/schedule/view/styles/controls.css
+@@ -0,0 +1,132 @@
++.days-scroll {
++  overflow-x: auto;
++  padding: 12px 4px 6px;
++  margin: 0 -4px;
++}
++.days {
++  position: relative;
++  display: grid;
++  grid-template-columns: repeat(var(--day-count), minmax(100px, 1fr));
++  min-width: calc(var(--day-count) * 100px);
++  padding-top: 4px;
++  margin-bottom: 18px;
++}
++.day {
++  position: relative;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  cursor: pointer;
++  padding: 8px 5px;
++  color: #657874;
++  gap: 3px;
++}
++.day input {
++  position: absolute;
++  opacity: 0;
++  inset: 0;
++  width: 100%;
++  height: 100%;
++  cursor: pointer;
++  margin: 0;
++}
++.day:has(input:focus-visible) {
++  outline: 2px dashed #ad5034;
++  outline-offset: 3px;
++}
++.day-name {
++  font: 400 26px/1.2 var(--hand);
++  letter-spacing: -0.035em;
++}
++.day-date {
++  font-size: 16px;
++}
++.day.active {
++  color: #244957;
++}
++.day.active:after {
++  content: &quot;&quot;;
++  position: absolute;
++  left: 25%;
++  right: 25%;
++  bottom: 0;
++  height: 3px;
++  background: #b879595e;
++  transform: rotate(-2deg);
++}
++.toolbar {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 12px;
++  padding: 10px 0;
++  border-top: 1px solid #71807b55;
++  border-bottom: 1px solid #71807b88;
++}
++.select-wrap {
++  position: relative;
++}
++.select-wrap select,
++.saved-filter {
++  font: 600 21px/1.4 var(--hand);
++  color: var(--ink);
++}
++.select-wrap select {
++  appearance: none;
++  width: 200px;
++  background: transparent;
++  border: 0;
++  padding: 8px 27px 8px 0;
++  cursor: pointer;
++}
++.select-wrap:after {
++  content: &quot;&quot;;
++  position: absolute;
++  right: 10px;
++  top: 16px;
++  width: 9px;
++  height: 9px;
++  border-right: 2px solid currentColor;
++  border-bottom: 2px solid currentColor;
++  transform: rotate(42deg);
++  pointer-events: none;
++}
++.saved-filter {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  min-height: 44px;
++  cursor: pointer;
++  white-space: nowrap;
++}
++.saved-filter input {
++  appearance: none;
++  position: relative;
++  flex: none;
++  width: 21px;
++  height: 21px;
++  margin: 0;
++  border: 2px solid #698080;
++  border-radius: 3px 5px 2px 4px;
++  transform: rotate(-4deg);
++  background: transparent;
++  cursor: pointer;
++}
++.saved-filter input:checked:after {
++  content: &quot;&quot;;
++  position: absolute;
++  left: 5px;
++  top: 0;
++  width: 7px;
++  height: 13px;
++  border-right: 2px solid #244957;
++  border-bottom: 2px solid #244957;
++  transform: rotate(40deg);
++}
++.search-row {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 16px;
++  margin-top: 12px;
++}
+diff --git a/src/schedule/view/styles/details.css b/src/schedule/view/styles/details.css
+new file mode 100644
+index 0000000..6e8edbd
+--- /dev/null
++++ b/src/schedule/view/styles/details.css
+@@ -0,0 +1,100 @@
++.event details[open] .arrow {
++  transform: rotate(180deg);
++}
++.locations {
++  margin-top: 9px;
++}
++.location {
++  display: flex;
++  align-items: baseline;
++  flex-wrap: wrap;
++  column-gap: 12px;
++  row-gap: 2px;
++  font-size: 19px;
++  line-height: 1.45;
++  color: #4e685f;
++  margin-top: 3px;
++}
++.location &gt; span {
++  font-weight: 500;
++}
++.open-location {
++  display: inline-flex;
++  gap: 5px;
++  align-items: baseline;
++  min-height: 32px;
++  padding: 3px 0;
++  color: #31584c;
++  font-size: 16px;
++  font-weight: 600;
++  text-decoration: underline;
++  text-decoration-style: dashed;
++  text-underline-offset: 4px;
++  white-space: nowrap;
++}
++.open-location:hover {
++  color: #172f27;
++  text-decoration-style: solid;
++}
++.description {
++  font-size: 18px;
++  line-height: 1.65;
++  color: #405d52;
++  margin: 14px 0;
++  overflow-wrap: anywhere;
++}
++.description p {
++  white-space: pre-wrap;
++  margin: 8px 0;
++}
++.event-links {
++  display: flex;
++  gap: 15px;
++  flex-wrap: wrap;
++  margin-top: 15px;
++}
++.event-links button {
++  border: 0;
++  padding: 0;
++  text-decoration: underline;
++}
++.save {
++  margin-top: 16px;
++  border: 0;
++  min-width: 38px;
++  min-height: 44px;
++  padding: 0;
++  color: #657e77;
++  font: 32px/1 var(--hand);
++}
++.save[aria-pressed=&quot;true&quot;] {
++  color: #9c6246;
++}
++.notice {
++  padding: 30px 0;
++  font-size: 15px;
++  line-height: 1.6;
++}
++.notice button {
++  margin-top: 12px;
++  border: 1px solid #657e77;
++  padding: 8px 16px;
++  font: 600 20px/1.3 var(--hand);
++}
++.error {
++  color: #813f2c;
++}
++.schedule-footer {
++  font-size: 16px;
++  line-height: 1.7;
++  color: #526b65;
++  padding-top: 28px;
++}
++.schedule-footer button {
++  border: 0;
++  padding: 0;
++  text-decoration: underline;
++}
++.archive-note {
++  margin-top: 7px;
++}
+diff --git a/src/schedule/view/styles/event-row.css b/src/schedule/view/styles/event-row.css
+new file mode 100644
+index 0000000..32591db
+--- /dev/null
++++ b/src/schedule/view/styles/event-row.css
+@@ -0,0 +1,131 @@
++.search-row input {
++  background: transparent;
++  border: 0;
++  border-bottom: 1px solid #71807b66;
++  padding: 8px 0;
++  max-width: 300px;
++  width: 55%;
++  font: 400 19px/1.4 var(--hand);
++}
++.search-row input::placeholder {
++  color: #637b77;
++  opacity: 1;
++}
++.day-heading {
++  display: flex;
++  justify-content: space-between;
++  gap: 12px;
++  align-items: baseline;
++  padding: 25px 0 5px;
++}
++.day-heading h2 {
++  font: 400 21px/1.3 var(--hand);
++}
++.day-heading &gt; span {
++  font-size: 16px;
++  color: #526967;
++}
++.event {
++  display: grid;
++  grid-template-columns: 86px minmax(0, 1fr) 38px;
++  gap: 14px;
++  position: relative;
++  align-items: start;
++  padding: 25px 0;
++  border-bottom: 1px solid #6e858044;
++}
++.event:hover,
++.event:focus-within {
++  background: #c5d6cc80;
++  box-shadow:
++    -8px 0 0 #c5d6cc80,
++    8px 0 0 #c5d6cc80,
++    inset 3px 0 #698b7a;
++}
++.event {
++  transition:
++    background-color 0.18s ease,
++    box-shadow 0.18s ease;
++}
++
++.time {
++  padding-top: 23px;
++  white-space: nowrap;
++  font: 600 21px/1.4 var(--hand);
++  letter-spacing: -0.025em;
++  color: #30474b;
++  font-variant-numeric: tabular-nums;
++}
++.time &gt; time {
++  font-size: 21px;
++  font-weight: 700;
++  color: #263f40;
++}
++.time p {
++  font: 500 16px/1.5 var(--hand);
++  letter-spacing: 0;
++  color: #52676a;
++  margin-top: 3px;
++}
++.next-day {
++  display: block;
++  font: 15px var(--hand);
++}
++.kind {
++  font-size: 14px;
++  text-transform: uppercase;
++  letter-spacing: 0.1em;
++  color: #536c65;
++  opacity: 0.85;
++  font-weight: 500;
++  display: flex;
++  align-items: center;
++  gap: 6px;
++  margin-bottom: 7px;
++  flex-wrap: wrap;
++}
++.kind:before {
++  content: &quot;&quot;;
++  width: 6px;
++  height: 6px;
++  border-radius: 50%;
++  background: #c3824e;
++}
++.kind-workshop:before {
++  background: #447887;
++}
++.kind-minievent:before {
++  background: #93728f;
++}
++.kind-meal:before {
++  background: #6c835b;
++}
++.live {
++  color: #2d674b;
++  font-weight: 700;
++}
++.event summary {
++  list-style: none;
++  cursor: pointer;
++  display: flex;
++  align-items: baseline;
++  justify-content: space-between;
++  gap: 12px;
++}
++.event summary::-webkit-details-marker {
++  display: none;
++}
++.event h2 {
++  font: 700 30px/1.16 var(--hand);
++  letter-spacing: -0.025em;
++  color: #263f40;
++  overflow-wrap: anywhere;
++}
++.arrow {
++  width: 26px;
++  height: 31px;
++  color: #607c70;
++  transition: transform 0.2s;
++  flex: none;
++  align-self: center;
++}
+diff --git a/src/schedule/view/styles/foundation/base.css b/src/schedule/view/styles/foundation/base.css
+new file mode 100644
+index 0000000..863f0ff
+--- /dev/null
++++ b/src/schedule/view/styles/foundation/base.css
+@@ -0,0 +1,73 @@
++:root {
++  font-family: &quot;Caveat Variable&quot;, cursive;
++  font-size: 19px;
++  font-weight: 500;
++  color: #38484a;
++  background: #071725;
++  font-synthesis: none;
++  --hand: &quot;Caveat Variable&quot;, cursive;
++  --ink: #344e52;
++  --paper: #f3f0df;
++  color-scheme: light;
++}
++* {
++  box-sizing: border-box;
++}
++body {
++  margin: 0;
++}
++button,
++input,
++select {
++  font: inherit;
++  color: inherit;
++}
++button,
++a,
++input,
++select,
++summary {
++  touch-action: manipulation;
++}
++button {
++  cursor: pointer;
++}
++a {
++  color: inherit;
++}
++button:disabled {
++  cursor: wait;
++  opacity: 0.6;
++}
++h1,
++h2,
++p {
++  margin: 0;
++}
++button,
++input,
++select {
++  border-radius: 3px;
++}
++button {
++  background: transparent;
++}
++a:focus-visible,
++button:focus-visible,
++input:focus-visible,
++select:focus-visible,
++summary:focus-visible {
++  outline: 2px dashed #ad5034;
++  outline-offset: 5px;
++}
++.skip-link {
++  position: fixed;
++  top: -80px;
++  left: 12px;
++  z-index: 20;
++  background: var(--paper);
++  padding: 12px;
++}
++.skip-link:focus {
++  top: 12px;
++}
+diff --git a/src/schedule/view/styles/foundation/header.css b/src/schedule/view/styles/foundation/header.css
+new file mode 100644
+index 0000000..900b1fb
+--- /dev/null
++++ b/src/schedule/view/styles/foundation/header.css
+@@ -0,0 +1,84 @@
++.masthead {
++  min-height: 82px;
++  max-width: 1120px;
++  margin: auto;
++  padding: 12px 35px;
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  position: relative;
++  z-index: 4;
++  color: var(--paper);
++  gap: 20px;
++}
++.logo {
++  display: block;
++  width: 149px;
++  height: 49px;
++}
++.navigation {
++  display: flex;
++  gap: 30px;
++  align-items: center;
++  font: 600 23px/1.4 var(--hand);
++}
++.navigation a {
++  text-decoration: none;
++  padding: 10px 0;
++}
++.navigation a:hover {
++  color: #e4b891;
++}
++.navigation a[aria-current] {
++  text-decoration: underline;
++  text-decoration-color: #d2a580;
++  text-underline-offset: 9px;
++  text-decoration-thickness: 2px;
++}
++.menu-toggle {
++  display: none;
++}
++.page {
++  position: relative;
++  z-index: 2;
++  width: min(920px, calc(100% - 150px));
++  margin: 15px auto 85px;
++  padding: 40px 80px 45px;
++  background: var(--paper);
++  isolation: isolate;
++  box-shadow:
++    0 16px 30px #00152388,
++    2px 3px 2px #00152355;
++  transform: rotate(-0.25deg);
++  border-radius: 2px 4px 1px 3px;
++  min-height: 400px;
++}
++.title-row {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  gap: 20px;
++}
++h1 {
++  font: 400 69px/1.1 var(--hand);
++  letter-spacing: -0.055em;
++  color: #34484e;
++}
++.pause {
++  display: flex;
++  gap: 7px;
++  align-items: center;
++  font-size: 16px;
++  white-space: nowrap;
++  cursor: pointer;
++  min-height: 44px;
++}
++.pause input {
++  accent-color: #456a70;
++}
++.edition {
++  font-size: 17px;
++  color: #5b706d;
++  margin-top: 8px;
++  margin-bottom: 22px;
++}
+diff --git a/src/schedule/view/styles/responsive/accessibility.css b/src/schedule/view/styles/responsive/accessibility.css
+new file mode 100644
+index 0000000..e1120fe
+--- /dev/null
++++ b/src/schedule/view/styles/responsive/accessibility.css
+@@ -0,0 +1,64 @@
++@media (max-width: 360px) {
++  .toolbar {
++    flex-wrap: wrap;
++    gap: 0;
++  }
++  .title-row {
++    flex-wrap: wrap;
++  }
++  .pause {
++    min-height: 30px;
++  }
++  .event {
++    grid-template-columns: 62px minmax(0, 1fr) 26px;
++  }
++  .time &gt; time {
++    font-size: 15px;
++  }
++}
++@media (prefers-reduced-motion: reduce) {
++  .arrow,
++  .event {
++    transition: none;
++  }
++}
++@media print {
++  .ocean,
++  .masthead,
++  .toolbar,
++  .search-row,
++  .save,
++  .pause,
++  .schedule-footer,
++  .days-scroll {
++    display: none;
++  }
++  .page {
++    width: 100%;
++    margin: 0;
++    padding: 15px;
++    transform: none;
++    box-shadow: none;
++  }
++  .page:before {
++    display: none;
++  }
++  .event {
++    break-inside: avoid;
++  }
++}
++
++/* Keep secondary guidance quiet without fading event names or actionable links. */
++.edition,
++.day-date,
++.day-heading &gt; span,
++.schedule-footer {
++  color: #617369;
++  font-weight: 400;
++}
++.day-heading h2 {
++  font-weight: 600;
++}
++h1 {
++  font-weight: 600;
++}
+diff --git a/src/schedule/view/styles/responsive/mobile.css b/src/schedule/view/styles/responsive/mobile.css
+new file mode 100644
+index 0000000..7f1c8d9
+--- /dev/null
++++ b/src/schedule/view/styles/responsive/mobile.css
+@@ -0,0 +1,123 @@
++@media (max-width: 650px) {
++  .masthead {
++    min-height: 70px;
++    padding: 10px 22px;
++    flex-wrap: wrap;
++    gap: 0;
++  }
++  .logo {
++    width: 121px;
++    height: 40px;
++  }
++  .menu-toggle {
++    display: block;
++    font: 600 21px var(--hand);
++    color: var(--paper);
++    border: 1px solid #b7c7c4;
++    padding: 8px 14px;
++  }
++  .navigation {
++    display: none;
++    width: 100%;
++    padding-top: 10px;
++    justify-content: space-between;
++    gap: 10px;
++    background: transparent;
++  }
++  .navigation.open {
++    display: flex;
++  }
++  .navigation a {
++    font-size: 19px;
++  }
++  .page {
++    width: calc(100% - 38px);
++    margin: 9px 19px 50px;
++    padding: 25px 24px 36px 54px;
++    transform: none;
++  }
++  h1 {
++    font-size: 49px;
++  }
++  .pause {
++    font-size: 15px;
++  }
++  .title-row {
++    gap: 8px;
++  }
++  .edition {
++    font-size: 16px;
++    margin-bottom: 14px;
++  }
++  .day-name {
++    font-size: 21px;
++  }
++  .day-date {
++    font-size: 15px;
++  }
++  .days {
++    grid-template-columns: repeat(var(--day-count), minmax(88px, 1fr));
++    min-width: calc(var(--day-count) * 88px);
++  }
++  .select-wrap select,
++  .saved-filter {
++    font-size: 16px;
++  }
++  .select-wrap select {
++    width: 145px;
++  }
++  .saved-filter {
++    gap: 7px;
++  }
++  .saved-filter input {
++    width: 18px;
++    height: 18px;
++  }
++  .saved-filter input:checked:after {
++    left: 4px;
++    width: 6px;
++    height: 11px;
++  }
++  .select-wrap:after {
++    top: 13px;
++    right: 7px;
++    width: 7px;
++    height: 7px;
++  }
++  .search-row {
++    flex-wrap: wrap;
++    gap: 6px;
++  }
++  .search-row input {
++    font-size: 17px;
++    width: 100%;
++    max-width: none;
++  }
++  .event {
++    grid-template-columns: 68px minmax(0, 1fr) 30px;
++    gap: 8px;
++    padding: 23px 0;
++  }
++  .time &gt; time {
++    font-size: 18px;
++  }
++  .time p {
++    font-size: 18px;
++  }
++  .event h2 {
++    font-size: 26px;
++  }
++  .location {
++    font-size: 16px;
++  }
++  .save {
++    font-size: 28px;
++    min-width: 30px;
++  }
++  .day-heading h2 {
++    font-size: 19px;
++  }
++  .description {
++    font-size: 17px;
++  }
++}
+diff --git a/src/schedule/view/styles/responsive/tablet.css b/src/schedule/view/styles/responsive/tablet.css
+new file mode 100644
+index 0000000..7c96865
+--- /dev/null
++++ b/src/schedule/view/styles/responsive/tablet.css
+@@ -0,0 +1,13 @@
++@media (max-width: 1000px) {
++  .page {
++    width: calc(100% - 110px);
++    padding: 36px 76px 45px;
++  }
++  .masthead {
++    padding: 12px 50px;
++  }
++  .navigation {
++    gap: 22px;
++    font-size: 21px;
++  }
++}
+</pre></details><p>Final deployment dpl_B5BZ1iKRVbxVHrmfgGNHT7u73zXc: READY, production alias updated. Computer Use at 390×844 verified expanded mobile navigation computed background rgba(0, 0, 0, 0); screenshot shows ocean behind links and 19 Friday events. Closed menu and reset viewport after check.</p><h3>Manual review</h3><p>Review the files above; try filters, star two overlaps, inspect My schedule, expand descriptions and open a location. On mobile open Menu: the ocean should show behind the links. Inspect boat movement near the bottom of the list. Google export requires an allowed testing account; hosted consent/export remains a separate verification limit.</p></section><h1>Working HackIllinois schedule</h1><p>September 7, 2026 · branch schedule-app</p><div class="result"><strong>Latest refinements complete:</strong> drawn downward expand arrows, stronger event highlighting, Google Maps actions beside each venue, and bolder names/start times with quieter secondary text. <a href="http://127.0.0.1:5173/">Open app</a> · <a href="../planning/implementation/planning-ideas.html">Planning and ocean concepts</a>. Concepts are proposals only; no deployment was made.</div><h2>Event interaction refinements — September 7, 2026</h2><p>User requested three concrete UI changes plus ideation. Changed src/schedule/view/EventCard.jsx: replaced diagonal disclosure character with a hand-drawn SVG arrow, and added separate Google Maps links for each venue outside the expandable details. Links prefer valid coordinates; missing/invalid coordinates fall back to the location name. Missing locations show text without a fabricated link.</p><p>Changed src/schedule/view/schedule.css: arrow rotates 180° when expanded, hover and keyboard focus use the same stronger green paper tint and left rule; titles and start times use weight 700; categories use reduced opacity and secondary labels quieter color. Caveat is retained throughout. Desktop and narrow overrides updated. Changed src/schedule/testing/Schedule.ui.test.jsx: two new integration tests cover multi-venue destinations, name fallback and absent locations. Updated planning/implementation/react-schedule-plan.html, saved-results/ocean-schedule-research.md and this report. Added planning/implementation/planning-ideas.html with illustrated proposals.</p><pre>https://www.google.com/maps/search/?api=1&amp;query=40.113812%2C-88.224937
 .event details[open] .arrow { transform: rotate(180deg); }
 .event:hover, .event:focus-within { background: #c5d6cc80; }</pre><p>Checks: new location tests failed before implementation (2 failed, 7 passed), then npm run test:ui passed 9/9. npm test passed 12/12. npm run format:check passed. npm run build passed: 35 modules; JS 209.17 kB, CSS 13.59 kB. git diff --check passed. Browser confirmed actual map URL coordinates for Attendee Check-In, expanded arrow matrix(-1,0,0,-1,0,0), highlight rgba(197,214,204,0.5), title/start weights 700. Desktop and narrow expanded screenshots inspected; location links wrap below long names on narrow screens. CSS source check caught and corrected an overly broad edit before final screenshot/build.</p><p>Browser tool does not expose locator.hover; the same highlight rule was verified through focus-within after clicking. Pointer-only hover was not independently automated. Maps URLs were validated against Google's official URL guide and tested as destinations; no physical navigation or indoor-room routing was verified. No new logger needed: rendering and URL creation introduce no asynchronous failure path. Searched arrow rotation and event/mobile styles; old 90° expansion behavior removed. Existing external-link arrows intentionally remain diagonal.</p><p>Manual check: hover or focus an event, expand/collapse it, open a venue link, and inspect the long location line on mobile. Planning concepts: saved stops in the ocean margin with overlap warnings; an optional boat/hour scrubber; free-time filtering; compact next-event note. These remain unimplemented for selection.</p><h2>Requested design comparison — September 7, 2026</h2><p><strong>Assessment: not a 10× improvement.</strong> This is a qualitative design judgment, not a measured usability result. Browser-inspected the local app, 2021 schedule, and 2026 schedule. The main official URL now points to a 2027 hype page, so 2026 is the relevant latest schedule comparison. Its initial empty message resolved into live events; it should not be judged as broken from that initial frame.</p><p>Our strongest differences are the paper-chart direction, independent ocean motion, search, local saved events and calendar export. But our title/date/route/day/filter/search stack delays the first event. The waves remain large textured background bands rather than a useful part of navigation. Caveat everywhere needs a stronger size, weight and contrast hierarchy. Arrow icons resemble external links but expand details, and mandatory check-in instructions are hidden until expanded.</p><p>The 2021 page exposes times, categories and descriptions near the top. The 2026 page has tag and time-range filters, direct building-map links, visible event descriptions and attendee resources. Our search and saves do not replace those advantages. A step-change in usefulness would combine a much shorter schedule header with clear Now/Next, conflict-aware saved plans and direct directions. These are proposals, not implemented behavior or evidence of improved user outcomes.</p><p>Recommended order: compress the upper layout; improve typography hierarchy while retaining Caveat; make event actions explicit and expose critical instructions; add direct directions and useful saved-plan conflict information; then refine the ocean's role and artwork scale. No app code was changed for this assessment.</p><p><a href="https://2026.hackillinois.org/schedule">2026 reference</a> · <a href="https://2021.hackillinois.org/schedule">2021 reference</a></p><h2>Request and result</h2><p>Connected the approved design to the public HackIllinois API, added the exact 2021 navigation order, and completed practical schedule behavior. Replaced system handwriting with locally bundled Caveat at the user's request. The older HTML sketch remains intact as design history; use the React app for live events.</p><ul><li>Days and categories come from events. Events sort chronologically and display Chicago time.</li><li>Search, category selection and saved-only filtering work together; saves survive reload without an account.</li><li>Details display locations, safe description links, available venue maps, menus/points and calendar download.</li><li>Loading, retry, no published events, no matching events and failed storage have explicit states. Failed refresh retains the last loaded events.</li><li>Mobile navigation, keyboard focus styling, skip link, reduced-motion CSS and ocean pause are included.</li></ul><h2>API route</h2><p>The direct browser request failed, and a header check returned HTTP 200 without Access-Control-Allow-Origin. The browser now requests /api/events from its own site. Vite forwards this locally; vercel.json defines the matching deployment rewrite. No secrets, authentication or event mutations are involved. Other hosts must provide the equivalent route; copying dist alone will not work.</p><h2>Files changed</h2><table><tr><th>File</th><th>Change</th></tr><tr><td><code>.gitignore</code></td><td>Exclude dependencies, builds, local worktrees and environment files.</td></tr><tr><td><code>README.md</code></td><td>Run, test and deployment steps; API routing, architecture and limitations.</td></tr><tr><td><code>index.html</code></td><td>React entry document, title, description and mobile viewport.</td></tr><tr><td><code>package.json</code></td><td>React/Vite/Caveat dependencies and run, build, test and formatting scripts.</td></tr><tr><td><code>package-lock.json</code></td><td>Lock dependency versions for repeatable installs.</td></tr><tr><td><code>vite.config.js</code></td><td>Local same-site API forwarding and UI test setup.</td></tr><tr><td><code>vercel.json</code></td><td>Deployment route forwards /api/events to the public API without cache.</td></tr><tr><td><code>src/main.jsx</code></td><td>Mount React and load locally bundled Caveat and styles.</td></tr><tr><td><code>src/App.jsx</code></td><td>Compose schedule, data-derived dates/types, search, saved filter, live status, retry and refresh.</td></tr><tr><td><code>src/test-setup.js</code></td><td>DOM matchers and cleanup for UI tests.</td></tr><tr><td><code>src/navigation/Navigation.jsx</code></td><td>2021 Home/Mentors/Prizes/Schedule navigation with mobile menu.</td></tr><tr><td><code>src/navigation/logo.svg</code></td><td>Official logo extracted unchanged from the approved prototype.</td></tr><tr><td><code>src/ocean/Ocean.jsx</code></td><td>Eight independent wave layers positioned from the selected day.</td></tr><tr><td><code>src/ocean/ocean.css</code></td><td>Proportional wave rendering, bobbing and travel, pause and reduced-motion rules.</td></tr><tr><td><code>src/ocean/artwork/wave-layers.png</code></td><td>Existing approved artwork copied unchanged into app assets.</td></tr><tr><td><code>src/schedule/data/events.js</code></td><td>Validate public API response, omit private/staff rows, sort, normalize, format Chicago dates and handle request errors.</td></tr><tr><td><code>src/schedule/data/events.test.js</code></td><td>Ten data/HTTP boundary tests.</td></tr><tr><td><code>src/schedule/data/logger.js</code></td><td>Tagged debug/warning/error messages without full event payloads.</td></tr><tr><td><code>src/schedule/state/useSchedule.js</code></td><td>Abortable request with 15-second timeout, retry and last-success preservation; persistent saved events.</td></tr><tr><td><code>src/schedule/view/EventCard.jsx</code></td><td>Expandable safe event text, locations, venue map links, save buttons and calendar download.</td></tr><tr><td><code>src/schedule/view/paper.css</code></td><td>Approved paper fibers, folds, grid and cut edges preserved.</td></tr><tr><td><code>src/schedule/view/schedule.css</code></td><td>Responsive Caveat typography throughout, schedule layout, sketched controls and focus states.</td></tr><tr><td><code>src/schedule/testing/Schedule.ui.test.jsx</code></td><td>Seven integrated React flow tests.</td></tr><tr><td><code>src/schedule/export/calendar.js</code></td><td>UTC calendar text generation, escaping and UTF-8 line folding.</td></tr><tr><td><code>src/schedule/export/calendar.test.js</code></td><td>Two calendar-content tests.</td></tr><tr><td><code>planning/implementation/react-schedule-plan.html</code></td><td>Working-app scope, decisions, sources and completion state.</td></tr><tr><td><code>saved-results/ocean-schedule-research.md</code></td><td>Record final implementation and observed API limitation.</td></tr><tr><td><code>saved-results/ocean-schedule-review.html</code></td><td>This complete human handoff.</td></tr></table><h2>Focused source</h2><pre>vercel.json
 {
