@@ -38,3 +38,7 @@ Add the exact deployed HTTPS origin to the OAuth client. Set the same public cli
 
 ## Live check — September 7, 2026
 Chrome export of 10 saved events completed with “0 added; 10 already in Google Calendar.” Real duplicate detection verified. This check did not observe a fresh insertion. The in-app browser permission popup was unavailable earlier; Chrome completed the flow.
+
+## Vercel origin — September 7, 2026
+Production: https://hackillinois-schedule-five.vercel.app/
+Added https://hackillinois-schedule-five.vercel.app to the existing HackIllinois Schedule web client authorized JavaScript origins; reopened settings and verified it persisted. Local origins retained. Public client ID configured as VITE_GOOGLE_CLIENT_ID in Vercel production. No client secret used. Google notes 5 minutes to a few hours propagation; hosted calendar write not yet tested.

@@ -1,4 +1,4 @@
-import { logger } from "../data/logger.js";
+import { logger } from "../data/diagnostics/logger.js";
 export const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 export async function exportToGoogle(events, token) {
   const result = { added: 0, existing: 0, failed: [], authExpired: false };

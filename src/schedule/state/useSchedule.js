@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchEvents } from "../data/events.js";
-import { logger } from "../data/logger.js";
+import { logger } from "../data/diagnostics/logger.js";
 const SAVED_KEY = "hackillinois:saved-events";
 export function useSavedEvents() {
   const [storageError, setStorageError] = useState(false);

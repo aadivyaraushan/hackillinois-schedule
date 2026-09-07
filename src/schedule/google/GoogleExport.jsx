@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { exportToGoogle, GOOGLE_SCOPE } from "./calendar.js";
-import { logger } from "../data/logger.js";
+import { logger } from "../data/diagnostics/logger.js";
 let scriptPromise;
 function loadGoogle() {
   if (window.google?.accounts?.oauth2) return Promise.resolve();

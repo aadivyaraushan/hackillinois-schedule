@@ -1,0 +1,64 @@
+@media (max-width: 360px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .title-row {
+    flex-wrap: wrap;
+  }
+  .pause {
+    min-height: 30px;
+  }
+  .event {
+    grid-template-columns: 62px minmax(0, 1fr) 26px;
+  }
+  .time > time {
+    font-size: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .event {
+    transition: none;
+  }
+}
+@media print {
+  .ocean,
+  .masthead,
+  .toolbar,
+  .search-row,
+  .save,
+  .pause,
+  .schedule-footer,
+  .days-scroll {
+    display: none;
+  }
+  .page {
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+    transform: none;
+    box-shadow: none;
+  }
+  .page:before {
+    display: none;
+  }
+  .event {
+    break-inside: avoid;
+  }
+}
+
+/* Keep secondary guidance quiet without fading event names or actionable links. */
+.edition,
+.day-date,
+.day-heading > span,
+.schedule-footer {
+  color: #617369;
+  font-weight: 400;
+}
+.day-heading h2 {
+  font-weight: 600;
+}
+h1 {
+  font-weight: 600;
+}

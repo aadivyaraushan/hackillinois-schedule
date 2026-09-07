@@ -1,36 +1,7 @@
+import EventDescription from "./details/EventDescription.jsx";
+import EventLocations from "./details/EventLocations.jsx";
 import React from "react";
 import { dayKey, formatDay, formatTime, typeLabel } from "../data/events.js";
-function safeUrl(value) {
-  try {
-    const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) ? url.href : null;
-  } catch {
-    return null;
-  }
-}
-function locationUrl(location) {
-  const hasCoordinates =
-    Number.isFinite(location.latitude) &&
-    Math.abs(location.latitude) <= 90 &&
-    Number.isFinite(location.longitude) &&
-    Math.abs(location.longitude) <= 180;
-  const query = hasCoordinates
-    ? `${location.latitude},${location.longitude}`
-    : location.description;
-  return `https://www.google.com/maps/search/?${new URLSearchParams({ api: "1", query })}`;
-}
-function Description({ text }) {
-  return text.split(/(https?:\/\/[^\s<>]+)/g).map((part, index) => {
-    const url = safeUrl(part);
-    return url ? (
-      <a key={index} href={url} target="_blank" rel="noreferrer">
-        {part}
-      </a>
-    ) : (
-      part
-    );
-  });
-}
 export default function EventCard({
   event,
   saved,
@@ -38,7 +9,6 @@ export default function EventCard({
   now,
   conflicts = [],
 }) {
-  const map = safeUrl(event.mapImageUrl);
   const ongoing = now >= event.startTime * 1000 && now < event.endTime * 1000;
   return (
     <article className="event" id={`event-${event.eventId}`}>
@@ -91,26 +61,7 @@ export default function EventCard({
               />
             </svg>
           </summary>
-          <div className="description">
-            <p>
-              <Description
-                text={
-                  event.description ||
-                  "No additional details have been published."
-                }
-              />
-            </p>
-            {event.sponsor && <p>Hosted by {event.sponsor}</p>}
-            {event.points > 0 && <p>{event.points} points</p>}
-            {event.menu?.length > 0 && <p>Menu: {event.menu.join(", ")}</p>}
-            <div className="event-links">
-              {map && (
-                <a href={map} target="_blank" rel="noreferrer">
-                  View venue map ↗
-                </a>
-              )}
-            </div>
-          </div>
+          <EventDescription event={event} />
         </details>
         {conflicts.map((other) => {
           const overlapStart = Math.max(event.startTime, other.startTime);
@@ -126,26 +77,7 @@ export default function EventCard({
             </p>
           );
         })}
-        <div className="locations">
-          {event.locations.length ? (
-            event.locations.map((location, index) => (
-              <p className="location" key={`${location.description}-${index}`}>
-                <span>{location.description}</span>
-                <a
-                  className="open-location"
-                  href={locationUrl(location)}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Open location: ${location.description}`}
-                >
-                  Open location <span aria-hidden="true">↗</span>
-                </a>
-              </p>
-            ))
-          ) : (
-            <p className="location">Location to be announced</p>
-          )}
-        </div>
+        <EventLocations event={event} />
       </div>
       <button
         className="save"

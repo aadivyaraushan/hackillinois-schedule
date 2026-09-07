@@ -1,0 +1,13 @@
+@media (max-width: 1000px) {
+  .page {
+    width: calc(100% - 110px);
+    padding: 36px 76px 45px;
+  }
+  .masthead {
+    padding: 12px 50px;
+  }
+  .navigation {
+    gap: 22px;
+    font-size: 21px;
+  }
+}

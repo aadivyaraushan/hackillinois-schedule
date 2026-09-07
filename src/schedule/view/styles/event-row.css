@@ -1,0 +1,131 @@
+.search-row input {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #71807b66;
+  padding: 8px 0;
+  max-width: 300px;
+  width: 55%;
+  font: 400 19px/1.4 var(--hand);
+}
+.search-row input::placeholder {
+  color: #637b77;
+  opacity: 1;
+}
+.day-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  padding: 25px 0 5px;
+}
+.day-heading h2 {
+  font: 400 21px/1.3 var(--hand);
+}
+.day-heading > span {
+  font-size: 16px;
+  color: #526967;
+}
+.event {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr) 38px;
+  gap: 14px;
+  position: relative;
+  align-items: start;
+  padding: 25px 0;
+  border-bottom: 1px solid #6e858044;
+}
+.event:hover,
+.event:focus-within {
+  background: #c5d6cc80;
+  box-shadow:
+    -8px 0 0 #c5d6cc80,
+    8px 0 0 #c5d6cc80,
+    inset 3px 0 #698b7a;
+}
+.event {
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.time {
+  padding-top: 23px;
+  white-space: nowrap;
+  font: 600 21px/1.4 var(--hand);
+  letter-spacing: -0.025em;
+  color: #30474b;
+  font-variant-numeric: tabular-nums;
+}
+.time > time {
+  font-size: 21px;
+  font-weight: 700;
+  color: #263f40;
+}
+.time p {
+  font: 500 16px/1.5 var(--hand);
+  letter-spacing: 0;
+  color: #52676a;
+  margin-top: 3px;
+}
+.next-day {
+  display: block;
+  font: 15px var(--hand);
+}
+.kind {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #536c65;
+  opacity: 0.85;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+.kind:before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c3824e;
+}
+.kind-workshop:before {
+  background: #447887;
+}
+.kind-minievent:before {
+  background: #93728f;
+}
+.kind-meal:before {
+  background: #6c835b;
+}
+.live {
+  color: #2d674b;
+  font-weight: 700;
+}
+.event summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.event summary::-webkit-details-marker {
+  display: none;
+}
+.event h2 {
+  font: 700 30px/1.16 var(--hand);
+  letter-spacing: -0.025em;
+  color: #263f40;
+  overflow-wrap: anywhere;
+}
+.arrow {
+  width: 26px;
+  height: 31px;
+  color: #607c70;
+  transition: transform 0.2s;
+  flex: none;
+  align-self: center;
+}

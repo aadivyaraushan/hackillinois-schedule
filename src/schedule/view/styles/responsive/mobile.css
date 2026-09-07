@@ -1,0 +1,123 @@
+@media (max-width: 650px) {
+  .masthead {
+    min-height: 70px;
+    padding: 10px 22px;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .logo {
+    width: 121px;
+    height: 40px;
+  }
+  .menu-toggle {
+    display: block;
+    font: 600 21px var(--hand);
+    color: var(--paper);
+    border: 1px solid #b7c7c4;
+    padding: 8px 14px;
+  }
+  .navigation {
+    display: none;
+    width: 100%;
+    padding-top: 10px;
+    justify-content: space-between;
+    gap: 10px;
+    background: transparent;
+  }
+  .navigation.open {
+    display: flex;
+  }
+  .navigation a {
+    font-size: 19px;
+  }
+  .page {
+    width: calc(100% - 38px);
+    margin: 9px 19px 50px;
+    padding: 25px 24px 36px 54px;
+    transform: none;
+  }
+  h1 {
+    font-size: 49px;
+  }
+  .pause {
+    font-size: 15px;
+  }
+  .title-row {
+    gap: 8px;
+  }
+  .edition {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+  .day-name {
+    font-size: 21px;
+  }
+  .day-date {
+    font-size: 15px;
+  }
+  .days {
+    grid-template-columns: repeat(var(--day-count), minmax(88px, 1fr));
+    min-width: calc(var(--day-count) * 88px);
+  }
+  .select-wrap select,
+  .saved-filter {
+    font-size: 16px;
+  }
+  .select-wrap select {
+    width: 145px;
+  }
+  .saved-filter {
+    gap: 7px;
+  }
+  .saved-filter input {
+    width: 18px;
+    height: 18px;
+  }
+  .saved-filter input:checked:after {
+    left: 4px;
+    width: 6px;
+    height: 11px;
+  }
+  .select-wrap:after {
+    top: 13px;
+    right: 7px;
+    width: 7px;
+    height: 7px;
+  }
+  .search-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .search-row input {
+    font-size: 17px;
+    width: 100%;
+    max-width: none;
+  }
+  .event {
+    grid-template-columns: 68px minmax(0, 1fr) 30px;
+    gap: 8px;
+    padding: 23px 0;
+  }
+  .time > time {
+    font-size: 18px;
+  }
+  .time p {
+    font-size: 18px;
+  }
+  .event h2 {
+    font-size: 26px;
+  }
+  .location {
+    font-size: 16px;
+  }
+  .save {
+    font-size: 28px;
+    min-width: 30px;
+  }
+  .day-heading h2 {
+    font-size: 19px;
+  }
+  .description {
+    font-size: 17px;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { logger } from "../data/logger.js";
+import { logger } from "../data/diagnostics/logger.js";
 import "./route.css";
 
 export default function EventRoute({ events, paused, onProgress }) {

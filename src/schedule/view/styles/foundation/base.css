@@ -1,0 +1,73 @@
+:root {
+  font-family: "Caveat Variable", cursive;
+  font-size: 19px;
+  font-weight: 500;
+  color: #38484a;
+  background: #071725;
+  font-synthesis: none;
+  --hand: "Caveat Variable", cursive;
+  --ink: #344e52;
+  --paper: #f3f0df;
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+button,
+a,
+input,
+select,
+summary {
+  touch-action: manipulation;
+}
+button {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+h1,
+h2,
+p {
+  margin: 0;
+}
+button,
+input,
+select {
+  border-radius: 3px;
+}
+button {
+  background: transparent;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px dashed #ad5034;
+  outline-offset: 5px;
+}
+.skip-link {
+  position: fixed;
+  top: -80px;
+  left: 12px;
+  z-index: 20;
+  background: var(--paper);
+  padding: 12px;
+}
+.skip-link:focus {
+  top: 12px;
+}
