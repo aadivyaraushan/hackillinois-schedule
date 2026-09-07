@@ -1,0 +1,85 @@
+.ocean {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #071725;
+  pointer-events: none;
+}
+.wave-row {
+  position: absolute;
+  top: var(--top);
+  left: -28%;
+  width: 156%;
+  aspect-ratio: var(--wave-ratio);
+  translate: var(--travel) 0;
+  transition: translate 2.6s cubic-bezier(0.25, 0.6, 0.3, 1) var(--lag);
+}
+.wave-surge,
+.wave-surface {
+  height: 100%;
+  width: 100%;
+}
+.wave-surface {
+  animation: wave-bob var(--period) ease-in-out var(--phase) infinite alternate;
+}
+.wave-surface svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.wave-surge {
+  animation-duration: 2.5s;
+  animation-timing-function: ease-in-out;
+  animation-delay: var(--lag);
+  animation-fill-mode: both;
+}
+@keyframes wave-bob {
+  from {
+    transform: translate(-10px, 5px) rotate(-0.4deg);
+  }
+  to {
+    transform: translate(12px, -8px) rotate(0.4deg);
+  }
+}
+@keyframes surge-even {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(var(--lift));
+  }
+}
+@keyframes surge-odd {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(var(--lift));
+  }
+}
+.paused .wave-surface,
+.paused .wave-surge {
+  animation-play-state: paused;
+}
+.paused .wave-row {
+  transition: none;
+}
+@media (max-width: 650px) {
+  .wave-row {
+    width: 190%;
+    left: -45%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave-row {
+    transition: none;
+  }
+  .wave-surface,
+  .wave-surge {
+    animation: none !important;
+  }
+}

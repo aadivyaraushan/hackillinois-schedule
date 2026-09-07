@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/events",
+      "destination": "https://adonix.hackillinois.org/event/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/events",
+      "headers": [
+        { "key": "x-vercel-enable-rewrite-caching", "value": "0" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ]
+}

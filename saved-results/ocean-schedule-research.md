@@ -93,3 +93,6 @@ Raised all waves 36px. Changed start/end times and AM/PM to Bradley Hand with ha
 
 ### Handwritten toolbar filters
 Restyled event type and Saved events with handwriting, sketched CSS arrow/checkbox and focus outlines. Native controls retained. Browser verified Food + saved Dinner + Saved events yields one row; resetting restores events. Desktop/narrow screenshots checked. Expanded dropdown menu remains OS controlled.
+
+## September 7, 2026 — Working React schedule
+Implemented in .worktrees/schedule-app on branch schedule-app. Copied 2021 topbar labels/order/destinations from the live archive. Public API returned 41 events for Feb 27–Mar 1, 2026; browser confirmed Friday 19 events and Saturday 3 workshops. Direct cross-origin fetch failed: HTTP 200 lacked Access-Control-Allow-Origin. Added Vite /api/events forwarding and matching Vercel rewrite. No deployment performed. Caveat requested by user, bundled with Fontsource and verified across page via computed styles. Persistent saves, search, filters, safe details, calendar export, retry/empty/stale refresh messages added. Tests: 12 data/calendar and 7 integrated UI passed; production build, formatting and diff checks passed. Browser mobile menu/save/reload/pause checks passed. See HTML review for all files, excerpts and limits.
